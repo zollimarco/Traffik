@@ -82,27 +82,69 @@ void main(void) {
         
         
         TRISD = 0x00;//imposto il registro a 00 per poter leggere gli slider
-        int valore = read_ADC(6);
+        char a = toString(countMoto);
+        uart_print(a);
         //char a = toString(stato);
         //uart_print(a);
         TRISB = 0xFF;
+        
         if(!PORTBbits.RB0){
-            __delay_ms(40);
-            
-            countMoto++;
+            int valore = read_ADC(3);
+            __delay_ms(400);
+            if(valore < 250 && valore >= 0){
+                countMoto++;
+            }else if(valore >250 && valore < 500){
+                countAuto++;
+            }else if(valore >500 && valore < 750){
+                countAutobus++;
+            }else {
+                countCamion++;
+            }
         }
         if(!PORTBbits.RB1){
             __delay_ms(40);
-            countAuto++;
+            int valore = read_ADC(4);
+            __delay_ms(40);
+            if(valore < 250 && valore >= 0){
+                countMoto++;
+            }else if(valore >250 && valore < 500){
+                countAuto++;
+            }else if(valore >500 && valore < 750){
+                countAutobus++;
+            }else {
+                countCamion++;
+            }
         }
         if(!PORTBbits.RB2){
             __delay_ms(40);
-            countAutobus++;
+            int valore = read_ADC(5);
+            __delay_ms(40);
+            if(valore < 250 && valore >= 0){
+                countMoto++;
+            }else if(valore >250 && valore < 500){
+                countAuto++;
+            }else if(valore >500 && valore < 750){
+                countAutobus++;
+            }else {
+                countCamion++;
+            }
         }
         if(!PORTBbits.RB3){
             __delay_ms(40);
-            countCamion++;
+            int valore = read_ADC(6);
+            __delay_ms(40);
+            if(valore < 250 && valore >= 0){
+                countMoto++;
+            }else if(valore >250 && valore < 500){
+                countAuto++;
+            }else if(valore >500 && valore < 750){
+                countAutobus++;
+            }else {
+                countCamion++;
+            }
         }
+
+        
     }
     return;
 }
