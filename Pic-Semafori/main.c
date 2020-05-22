@@ -28,13 +28,19 @@ char *toString(int);
 char str[5];// variabile string convertita
 
 //tempi dei semafori
-char tempi_s1[3] = {5,2,9}; //0 G - 1 Y 2 R
-char tempi_s2[3] = {5,2,9};
+unsigned char DIM = 6;
+char tempi[6] = {5,2,2,5,2,2};
 
-char tempo = 0,tempo2 = 0;
-int t1,t2;
+char tempo = 0;
+int stato;
 int count;
 char decine, unita;
+
+//contatori vecoli
+char countMoto = 0;     //pulsante RB0    ID 0110
+char countAuto = 0;     //pulsante RB1    ID 0100
+char countAutobus = 0;  //pulsante RB2    ID 0111
+char countCamion = 0;   //pulsante RB3    ID 0101
 
 void main(void) {
     TRISD = 0x00;
@@ -49,53 +55,54 @@ void main(void) {
     TMR0 = 131; 
     
     count = 0;
-    t1 = 0; //stato semaforo1
-    t2 = 2; //stato semaforo2
-
+    stato = 0; //stato semaforo1
+    
     while(1)
     {
         //stati dei semafori
-        if(t1 == 0){
-        PORTDbits.RD1 = 0; //red
-        PORTDbits.RD2 = 1; //green
-        PORTDbits.RD3 = 0; //blue
+        switch(stato){
+            case 0:
+                PORTD = 0x22; // 1 Rosso  2 Verde
+            break;
+            case 1:
+                PORTD = 0x32;    //1 Rosso 2 Giallo
+            break;
+            case 2:
+            case 5:
+                PORTD = 0x12;       //1Rosso 2Rosso
+            break;
+            case 3:
+                 PORTD = 0x14;   //1 Verde 2 Rosso
+            break;
+            case 4:
+                PORTD = 0x16;   //1 Giallo 2 Rosso
+            break;
+            
         }
-        if(t2 == 0){
-        PORTDbits.RD4 = 0; //red
-        PORTDbits.RD5 = 1; //green
-        PORTDbits.RD6 = 0; //blue
         
-        }
-        if (t1 == 1){
-        PORTDbits.RD1 = 1; //red
-        PORTDbits.RD2 = 1; //green
-        PORTDbits.RD3 = 0; //blue
-        }
-        if(t2 == 1){
-        PORTDbits.RD4 = 1; //red
-        PORTDbits.RD5 = 1; //green
-        PORTDbits.RD6 = 0; //blue
-        }
-        if (t1 == 2){
-        PORTDbits.RD1 = 1; //red
-        PORTDbits.RD2 = 0; //green
-        PORTDbits.RD3 = 0; //blue
-        }
-        if(t2 == 2){
-        PORTDbits.RD4 = 1; //red
-        PORTDbits.RD5 = 0; //green
-        PORTDbits.RD6 = 0; //blue
-        
-        }
         
         TRISD = 0x00;//imposto il registro a 00 per poter leggere gli slider
         int valore = read_ADC(6);
-        char a = toString(t1);
-        uart_print(a);
-        uart_print('-');
-        char b = toString(t2);
-        uart_print(b);
-        
+        //char a = toString(stato);
+        //uart_print(a);
+        TRISB = 0xFF;
+        if(!PORTBbits.RB0){
+            __delay_ms(40);
+            
+            countMoto++;
+        }
+        if(!PORTBbits.RB1){
+            __delay_ms(40);
+            countAuto++;
+        }
+        if(!PORTBbits.RB2){
+            __delay_ms(40);
+            countAutobus++;
+        }
+        if(!PORTBbits.RB3){
+            __delay_ms(40);
+            countCamion++;
+        }
     }
     return;
 }
@@ -111,27 +118,15 @@ void __interrupt() ISR()
         {
             count = 0;
 
-            tempo ++; //incremento il tempo dei colori dei 2 semafori semaforo
-            tempo2 ++; //inremento il tempo dei colori dei altri 2 semafori
-            if (tempo > tempi_s1[t1]) //cambio dei colori della prima coppia dei semafori
+            tempo ++; //incremento il tempo dei colori dei 2 semafori semaforo          
+            if (tempo > tempi[stato]) //cambio dei colori della prima coppia dei semafori
             {
                 tempo = 0; 
-                t1 ++;    //incremento lo stato del semaforo
-                if (t1 > 2){  
-                    t1 = 0; //torno al verde
-                    tempo2 = 0; //azzero il tempo del altro semaforo perchè si sballavano i tempi
-                    //vedi registrazione PW 22/05/2020 prima ora
+                stato ++;    //incremento lo stato del semaforo
+                if (stato > DIM){  
+                    stato = 0; //torno al verde
                 }  
                 
-            }
-            if(tempo2 > tempi_s2[t2]){               
-                tempo2 = 0; 
-                t2 ++;
-                 
-                if(t2 > 2){
-                    t2 = 0;
-                    tempo = 0;
-                }
             }
         }
     }
