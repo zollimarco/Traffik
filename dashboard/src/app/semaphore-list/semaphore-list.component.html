@@ -1,1 +1,8 @@
-<p>semaphore-list works!</p>
+<div class="action-buttons">
+    <button mat-button (click)="accordion.openAll()">Expand All</button>
+    <button mat-button (click)="accordion.closeAll()">Collapse All</button>
+</div>
+<mat-divider class="divider"></mat-divider>
+<mat-accordion class="headers-align" multi>
+    <app-semaphore></app-semaphore>
+</mat-accordion>

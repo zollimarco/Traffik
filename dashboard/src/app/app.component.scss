@@ -29,10 +29,10 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 60px;
+    height: 80px;
     display: flex;
     align-items: center;
-    background-color: #1976d2;
+    background-color: #5BC0BE;
     color: white;
     font-weight: 600;
     padding-left: 20px;
@@ -44,5 +44,9 @@
     }
     .clock{
         font-weight: lighter;
+        margin-left: auto;
     }
+  }
+  .content{
+    margin-top: 100px;
   }

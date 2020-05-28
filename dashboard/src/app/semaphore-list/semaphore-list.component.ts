@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatAccordion } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-semaphore-list',
@@ -7,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SemaphoreListComponent implements OnInit {
 
+  
+  @ViewChild(MatAccordion) accordion: MatAccordion;
   constructor() { }
 
   ngOnInit(): void {
