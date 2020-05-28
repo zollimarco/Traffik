@@ -66,7 +66,7 @@ char str[5];// variabile string convertita
 unsigned char DIM = 6;
 char tempi[6] = {5,2,2,5,2,2};
 
-char tempo = 0;
+char tempo = 1;
 int stato;
 int count;
 char decine, unita;
@@ -84,6 +84,10 @@ char decine_s2 = 0;
 char unita_s1 = 0;
 char unita_s2 = 0;
 int valore = 0 , valore2 = 0;
+
+
+void timer();
+void semafori();
 
 void main(void) {
     TRISD = 0x00;
@@ -104,6 +108,11 @@ void main(void) {
     
     while(1)
     {
+     
+          count_seg++;
+            
+         if(count_seg>3)
+             count_seg=0;
         
         PORTCbits.RC0 = 1;
         PORTCbits.RC1 = 1;
@@ -111,100 +120,11 @@ void main(void) {
         //PORTCbits.RC5 = 1;
         //PORTCbits.RC6 = 1;
         
-        
-        TRISD = 0x00;
-        TRISA=0x00;
-        
-        switch(count_seg){
-            case 0:  //display 1
-                PORTA= 0x20;
-                PORTD=numero[unita_s1];
-                break;
-            case 1: //display 2
-                PORTA=0x10;
-                PORTD=numero[decine_s1];
-                break;
-            case 2: //display 3
-                PORTA=0x08;
-                PORTD=numero[unita_s2];
-                break;
-            case 3: //display 4
-                PORTA=0x04;
-                PORTD=numero[decine_s2];
-                break;
-        }
-        
-        //timer
-        if(cambio_tempo == 1){
-            cambio_tempo = 0;
-            switch(stato){
-                case 0:
-                    valore = (tempi[0] + tempi[1] + tempi[2]) - tempo; //rosso s1
-                    valore2 = tempi[stato] - tempo;     //verde e giallo s2
-                    break;
-                case 1:
-                    valore = (tempi[1] + tempi[2]) - tempo; //rosso s1
-                 valore2 = tempi[stato] - tempo;     //verde e giallo s2
-                    break;
-                case 2:
-                    valore = (tempi[2]) - tempo; //rosso s1
-                    valore2 = tempi[stato] - tempo;     //verde e giallo s2
-                    break;
-                case 3:
-                    valore2 = (tempi[0] + tempi[1] + tempi[2]) - tempo; //rosso s2
-                    valore = tempi[stato] - tempo; //verde e giallo s1
-                    break;
-                case 4:
-                    valore2 = (tempi[1] + tempi[2]) - tempo; //rosso s2
-                    valore = tempi[stato] - tempo; //verde e giallo s1
-                    break;
-                case 5:
-                    valore2 = (tempi[2]) - tempo; //rosso s2
-                    valore = tempi[stato] - tempo; //verde e giallo s1
-                    break;
-            }
-            
-            if(valore < 10) {
-            decine_s1 = 0;
-            unita_s1 = valore;
-            
-            }else{
-                decine_s1 = valore /10;
-                unita_s1 = valore % 10;
-            }
-            if(valore2 < 10) {
-            decine_s2 = 0;
-            unita_s2 = valore2;
-            
-            }else{
-                decine_s2 = valore2 /10;
-                unita_s2 = valore2 % 10;
-            }
-            
-        }
-        
-        
-        
+        //timer 7 segmenti
+        timer();
+
         //stati dei semafori
-        switch(stato){
-            case 0:
-                //PORTD = 0x22; // 1 Rosso  2 Verde
-            break;
-            case 1:
-                //PORTD = 0x32;    //1 Rosso 2 Giallo
-            break;
-            case 2:
-            case 5:
-                //PORTD = 0x12;       //1Rosso 2Rosso
-            break;
-            case 3:
-                // PORTD = 0x14;   //1 Verde 2 Rosso
-            break;
-            case 4:
-                //PORTD = 0x16;   //1 Giallo 2 Rosso
-            break;
-            
-        }
+        semafori();
         
         TRISD = 0x00;//imposto il registro a 00 per poter leggere gli slider
         char a = toString(countMoto);
@@ -274,6 +194,101 @@ void main(void) {
     return;
 }
 
+
+void semafori(){
+            switch(stato){
+            case 0:
+                //PORTD = 0x22; // 1 Rosso  2 Verde
+            break;
+            case 1:
+                //PORTD = 0x32;    //1 Rosso 2 Giallo
+            break;
+            case 2:
+            case 5:
+                //PORTD = 0x12;       //1Rosso 2Rosso
+            break;
+            case 3:
+                // PORTD = 0x14;   //1 Verde 2 Rosso
+            break;
+            case 4:
+                //PORTD = 0x16;   //1 Giallo 2 Rosso
+            break;
+            
+        }
+}
+void timer(){
+            TRISD = 0x00;
+        TRISA=0x00;
+        
+        switch(count_seg){
+            case 0:  //display 1
+                PORTA= 0x20;
+                PORTD=numero[unita_s1];
+                break;
+            case 1: //display 2
+                PORTA=0x10;
+                PORTD=numero[decine_s1];
+                break;
+            case 2: //display 3
+                PORTA=0x08;
+                PORTD=numero[unita_s2];
+                break;
+            case 3: //display 4
+                PORTA=0x04;
+                PORTD=numero[decine_s2];
+                break;
+        }
+        
+        //timer
+        if(cambio_tempo == 1){
+            cambio_tempo = 0;
+            switch(stato){
+                case 0:
+                    valore = (tempi[0] + tempi[1] + tempi[2]) - tempo; //rosso s1
+                    valore2 = tempi[stato] - tempo;     //verde e giallo s2
+                    break;
+                case 1:
+                    valore = (tempi[1] + tempi[2]) - tempo; //rosso s1
+                 valore2 = tempi[stato] - tempo;     //verde e giallo s2
+                    break;
+                case 2:
+                    valore = (tempi[2]) - tempo; //rosso s1
+                    valore2 = tempi[stato] - tempo;     //verde e giallo s2
+                    break;
+                case 3:
+                    valore2 = (tempi[0] + tempi[1] + tempi[2]) - tempo; //rosso s2
+                    valore = tempi[stato] - tempo; //verde e giallo s1
+                    break;
+                case 4:
+                    valore2 = (tempi[1] + tempi[2]) - tempo; //rosso s2
+                    valore = tempi[stato] - tempo; //verde e giallo s1
+                    break;
+                case 5:
+                    valore2 = (tempi[2]) - tempo; //rosso s2
+                    valore = tempi[stato] - tempo; //verde e giallo s1
+                    break;
+            }
+            
+            if(valore < 10) {
+            decine_s1 = 0;
+            unita_s1 = valore;
+            
+            }else{
+                decine_s1 = valore /10;
+                unita_s1 = valore % 10;
+            }
+            if(valore2 < 10) {
+            decine_s2 = 0;
+            unita_s2 = valore2;
+            
+            }else{
+                decine_s2 = valore2 /10;
+                unita_s2 = valore2 % 10;
+            }
+            
+        }
+}
+
 void __interrupt() ISR()
 {
     if (INTCON&0x04)
@@ -281,10 +296,6 @@ void __interrupt() ISR()
         INTCON &= ~0x04;
         count++;
         //7 Segemnti
-            count_seg++;
-            
-         if(count_seg>3)
-             count_seg=0;
         
         if (count > 500) //interrupt si attiva ogni 2ms quindi mettendo 500 entra ogni 1 secondo
         {
@@ -294,9 +305,9 @@ void __interrupt() ISR()
             tempo ++; //incremento il tempo dei colori dei 2 semafori semaforo          
             if (tempo > tempi[stato]) //cambio dei colori della prima coppia dei semafori
             {
-                tempo = 0; 
+                tempo = 1; 
                 stato ++;    //incremento lo stato del semaforo
-                if (stato > DIM){  
+                if (stato >= DIM){  
                     stato = 0; //torno al verde
                 }  
                 
