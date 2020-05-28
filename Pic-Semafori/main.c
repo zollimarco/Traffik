@@ -15,6 +15,41 @@
 
 #include <xc.h>
 
+// 7 Segmenti
+
+#define SEGMENT_A 0x01
+#define SEGMENT_B 0x02
+#define SEGMENT_C 0x04
+#define SEGMENT_D 0x08
+#define SEGMENT_E 0x10
+#define SEGMENT_F 0x20
+#define SEGMENT_G 0x40 
+
+#define CIFRA_0 SEGMENT_A | SEGMENT_B | SEGMENT_C | SEGMENT_D | SEGMENT_E | SEGMENT_F
+#define CIFRA_1 SEGMENT_B | SEGMENT_C 
+#define CIFRA_2 SEGMENT_A | SEGMENT_B | SEGMENT_D | SEGMENT_E |  SEGMENT_G
+#define CIFRA_3 SEGMENT_A | SEGMENT_B | SEGMENT_C | SEGMENT_D | SEGMENT_G
+#define CIFRA_4 SEGMENT_B | SEGMENT_C | SEGMENT_F | SEGMENT_G
+#define CIFRA_5 SEGMENT_A | SEGMENT_C | SEGMENT_D | SEGMENT_F | SEGMENT_G
+#define CIFRA_6 SEGMENT_A | SEGMENT_C | SEGMENT_D | SEGMENT_E | SEGMENT_F | SEGMENT_G
+#define CIFRA_7 SEGMENT_A | SEGMENT_B | SEGMENT_C 
+#define CIFRA_8 SEGMENT_A | SEGMENT_B | SEGMENT_C | SEGMENT_D | SEGMENT_E | SEGMENT_F | SEGMENT_G
+#define CIFRA_9 SEGMENT_A | SEGMENT_B | SEGMENT_C | SEGMENT_D | SEGMENT_F | SEGMENT_G
+#define CIFRA_A SEGMENT_A | SEGMENT_B | SEGMENT_C | SEGMENT_E | SEGMENT_F | SEGMENT_G
+#define CIFRA_B SEGMENT_C | SEGMENT_D | SEGMENT_E | SEGMENT_F | SEGMENT_G
+#define CIFRA_C SEGMENT_A | SEGMENT_D | SEGMENT_E | SEGMENT_F 
+#define CIFRA_D SEGMENT_B | SEGMENT_C | SEGMENT_D | SEGMENT_E | SEGMENT_G
+#define CIFRA_E SEGMENT_A | SEGMENT_D | SEGMENT_E | SEGMENT_F | SEGMENT_G
+#define CIFRA_F SEGMENT_A | SEGMENT_E | SEGMENT_F | SEGMENT_G
+
+const char numero[16] ={ CIFRA_0, CIFRA_1, CIFRA_2, CIFRA_3, CIFRA_4, CIFRA_5, CIFRA_6, CIFRA_7,
+                         CIFRA_8, CIFRA_9, CIFRA_A, CIFRA_B, CIFRA_C, CIFRA_D, CIFRA_E, CIFRA_F };
+
+
+char count_seg = 0;
+
+
+
 #define _XTAL_FREQ 32000000
 
 void init_ADC(); //inizializzazione degli slider
@@ -42,6 +77,14 @@ char countAuto = 0;     //pulsante RB1    ID 0100
 char countAutobus = 0;  //pulsante RB2    ID 0111
 char countCamion = 0;   //pulsante RB3    ID 0101
 
+//Tempo attesa semafori
+char cambio_tempo = 0;
+char decine_s1 = 0;
+char decine_s2 = 0;
+char unita_s1 = 0;
+char unita_s2 = 0;
+int valore = 0 , valore2 = 0;
+
 void main(void) {
     TRISD = 0x00;
     PORTD = 0x00;
@@ -57,29 +100,111 @@ void main(void) {
     count = 0;
     stato = 0; //stato semaforo1
     
+    
+    
     while(1)
     {
-        //stati dei semafori
-        switch(stato){
-            case 0:
-                PORTD = 0x22; // 1 Rosso  2 Verde
-            break;
-            case 1:
-                PORTD = 0x32;    //1 Rosso 2 Giallo
-            break;
-            case 2:
-            case 5:
-                PORTD = 0x12;       //1Rosso 2Rosso
-            break;
-            case 3:
-                 PORTD = 0x14;   //1 Verde 2 Rosso
-            break;
-            case 4:
-                PORTD = 0x16;   //1 Giallo 2 Rosso
-            break;
+        
+        PORTCbits.RC0 = 1;
+        PORTCbits.RC1 = 1;
+        
+        //PORTCbits.RC5 = 1;
+        //PORTCbits.RC6 = 1;
+        
+        
+        TRISD = 0x00;
+        TRISA=0x00;
+        
+        switch(count_seg){
+            case 0:  //display 1
+                PORTA= 0x20;
+                PORTD=numero[unita_s1];
+                break;
+            case 1: //display 2
+                PORTA=0x10;
+                PORTD=numero[decine_s1];
+                break;
+            case 2: //display 3
+                PORTA=0x08;
+                PORTD=numero[unita_s2];
+                break;
+            case 3: //display 4
+                PORTA=0x04;
+                PORTD=numero[decine_s2];
+                break;
+        }
+        
+        //timer
+        if(cambio_tempo == 1){
+            cambio_tempo = 0;
+            switch(stato){
+                case 0:
+                    valore = (tempi[0] + tempi[1] + tempi[2]) - tempo; //rosso s1
+                    valore2 = tempi[stato] - tempo;     //verde e giallo s2
+                    break;
+                case 1:
+                    valore = (tempi[1] + tempi[2]) - tempo; //rosso s1
+                 valore2 = tempi[stato] - tempo;     //verde e giallo s2
+                    break;
+                case 2:
+                    valore = (tempi[2]) - tempo; //rosso s1
+                    valore2 = tempi[stato] - tempo;     //verde e giallo s2
+                    break;
+                case 3:
+                    valore2 = (tempi[0] + tempi[1] + tempi[2]) - tempo; //rosso s2
+                    valore = tempi[stato] - tempo; //verde e giallo s1
+                    break;
+                case 4:
+                    valore2 = (tempi[1] + tempi[2]) - tempo; //rosso s2
+                    valore = tempi[stato] - tempo; //verde e giallo s1
+                    break;
+                case 5:
+                    valore2 = (tempi[2]) - tempo; //rosso s2
+                    valore = tempi[stato] - tempo; //verde e giallo s1
+                    break;
+            }
+            
+            if(valore < 10) {
+            decine_s1 = 0;
+            unita_s1 = valore;
+            
+            }else{
+                decine_s1 = valore /10;
+                unita_s1 = valore % 10;
+            }
+            if(valore2 < 10) {
+            decine_s2 = 0;
+            unita_s2 = valore2;
+            
+            }else{
+                decine_s2 = valore2 /10;
+                unita_s2 = valore2 % 10;
+            }
             
         }
         
+        
+        
+        //stati dei semafori
+        switch(stato){
+            case 0:
+                //PORTD = 0x22; // 1 Rosso  2 Verde
+            break;
+            case 1:
+                //PORTD = 0x32;    //1 Rosso 2 Giallo
+            break;
+            case 2:
+            case 5:
+                //PORTD = 0x12;       //1Rosso 2Rosso
+            break;
+            case 3:
+                // PORTD = 0x14;   //1 Verde 2 Rosso
+            break;
+            case 4:
+                //PORTD = 0x16;   //1 Giallo 2 Rosso
+            break;
+            
+        }
         
         TRISD = 0x00;//imposto il registro a 00 per poter leggere gli slider
         char a = toString(countMoto);
@@ -155,11 +280,17 @@ void __interrupt() ISR()
     {
         INTCON &= ~0x04;
         count++;
+        //7 Segemnti
+            count_seg++;
+            
+         if(count_seg>3)
+             count_seg=0;
         
         if (count > 500) //interrupt si attiva ogni 2ms quindi mettendo 500 entra ogni 1 secondo
         {
             count = 0;
-
+            cambio_tempo = 1;
+            
             tempo ++; //incremento il tempo dei colori dei 2 semafori semaforo          
             if (tempo > tempi[stato]) //cambio dei colori della prima coppia dei semafori
             {
