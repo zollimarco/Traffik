@@ -1,3 +1,4 @@
+
 import { Component } from '@angular/core';
 
 @Component({
@@ -6,5 +7,11 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'traffik-dashboard';
+  clock:Date = new Date();
+  
+  ngOnInit() {
+    setInterval(() => {
+       this.clock = new Date();
+    }, 30000);
+  }
 }
