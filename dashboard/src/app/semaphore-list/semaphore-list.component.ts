@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
 
 @Component({
@@ -10,9 +10,11 @@ export class SemaphoreListComponent implements OnInit {
 
   
   @ViewChild(MatAccordion) accordion: MatAccordion;
+  @Input()
+  search: string;
+
   constructor() { }
 
   ngOnInit(): void {
   }
-
 }
