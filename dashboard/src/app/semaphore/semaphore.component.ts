@@ -10,7 +10,6 @@ export class SemaphoreComponent implements OnInit {
   constructor() { }
 
   // colore semaforo, gestione dello stato
-
   n_vehicle = null;
   humidity = null;
   temperature = null;
@@ -30,7 +29,6 @@ export class SemaphoreComponent implements OnInit {
       // ToDo
       console.log("Dettagli");
   }
-
 }
 
 
