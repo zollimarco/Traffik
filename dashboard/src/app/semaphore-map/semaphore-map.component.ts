@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 //const configuration = require("config.json");
 import { api_maps } from 'config/api.json';
+import { SemaphoreMap } from '../models/semaphore-map';
 
 @Component({
   selector: 'app-semaphore-map',
@@ -8,13 +9,19 @@ import { api_maps } from 'config/api.json';
   styleUrls: ['./semaphore-map.component.scss']
 })
 export class SemaphoreMapComponent implements OnInit {
-  image_url;
-  constructor() { }
+  image_url: string;
+  semaphore_map: SemaphoreMap = new SemaphoreMap();
+  
+  constructor() {}
 
-  ngOnInit(): void {
-    let latitude = 45.95160;
-    let longitude = 12.68054;
-    this.image_url = api_maps.url + api_maps.key + "&size=600,400&type=map&imagetype=jpg&zoom=18&scalebar=false&traffic=false&center=" + latitude.toString() + "," + longitude.toString() + api_maps.end_url;
+  ngOnInit(): void { 
+    this.semaphore_map.coordinates.latitude = 45.95160;
+    this.semaphore_map.coordinates.longitude = 12.68054;
+    this.semaphore_map.size.height = 300;
+    this.semaphore_map.size.width = 400;
+    this.semaphore_map.zoom = 18;
+    
+    this.image_url = api_maps.url + api_maps.key + "&size=" + this.semaphore_map.size.width + "," + this.semaphore_map.size.height + "&type=map&imagetype=jpg&zoom=" + this.semaphore_map.zoom + "&scalebar=false&traffic=false&center=" + this.semaphore_map.coordinates.latitude + "," + this.semaphore_map.coordinates.longitude + api_maps.end_url;
   }
 
 }
