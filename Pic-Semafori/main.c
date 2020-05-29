@@ -48,7 +48,7 @@ const char numero[16] ={ CIFRA_0, CIFRA_1, CIFRA_2, CIFRA_3, CIFRA_4, CIFRA_5, C
 
 char count_seg = 0;
 
-
+const char id_incrocio = 0x00; 
 
 #define _XTAL_FREQ 32000000
 
@@ -57,7 +57,7 @@ int read_ADC(int canale); //lettura valore slider
 
 void UART_init(int); // inizializzo la comunicazione con la seriale
 void UART_TxChar(char); // invio una dato al terminale
-void uart_print(char *);
+void uart_print(char,char);
 
 char *toString(int);
 char str[5];// variabile string convertita
@@ -85,9 +85,15 @@ char unita_s1 = 0;
 char unita_s2 = 0;
 int valore = 0 , valore2 = 0;
 
+char old_stato;
 
 void timer();
 void semafori();
+
+//invio sensori
+char minuti = 0;
+char secondi = 0;
+char old_RB0 ,old_RB1,old_RB2,old_RB3;
 
 void main(void) {
     TRISD = 0x00;
@@ -104,11 +110,24 @@ void main(void) {
     count = 0;
     stato = 0; //stato semaforo1
     
-    
+    old_stato = stato;
     
     while(1)
     {
-     
+        if(secondi >=10){
+            minuti ++;
+            secondi = 0;
+            uart_print(0x07,countMoto);
+            uart_print(0x05,countAuto);
+            uart_print(0x08,countAutobus);
+            uart_print(0x06,countCamion);
+            
+            countMoto = 0;
+            countAuto = 0;
+            countAutobus = 0;
+            countCamion = 0;
+
+        }
           count_seg++;
             
          if(count_seg>3)
@@ -124,18 +143,18 @@ void main(void) {
         timer();
 
         //stati dei semafori
-        semafori();
+        //semafori();
         
         TRISD = 0x00;//imposto il registro a 00 per poter leggere gli slider
-        char a = toString(countMoto);
-        uart_print(a);
+        //char a = toString(countMoto);
+        //uart_print(a);
         //char a = toString(stato);
         //uart_print(a);
         TRISB = 0xFF;
         
-        if(!PORTBbits.RB0){
+        if(!PORTBbits.RB0 && old_RB0){
             int valore = read_ADC(3);
-            __delay_ms(400);
+            
             if(valore < 250 && valore >= 0){
                 countMoto++;
             }else if(valore >250 && valore < 500){
@@ -146,10 +165,12 @@ void main(void) {
                 countCamion++;
             }
         }
-        if(!PORTBbits.RB1){
-            __delay_ms(40);
+        old_RB0 = PORTBbits.RB0; //1
+        
+        if(!PORTBbits.RB1 && old_RB1){
+            
             int valore = read_ADC(4);
-            __delay_ms(40);
+            
             if(valore < 250 && valore >= 0){
                 countMoto++;
             }else if(valore >250 && valore < 500){
@@ -160,10 +181,11 @@ void main(void) {
                 countCamion++;
             }
         }
-        if(!PORTBbits.RB2){
-            __delay_ms(40);
+        old_RB1 = PORTBbits.RB1;
+        if(!PORTBbits.RB2 && old_RB2){
+            
             int valore = read_ADC(5);
-            __delay_ms(40);
+            
             if(valore < 250 && valore >= 0){
                 countMoto++;
             }else if(valore >250 && valore < 500){
@@ -174,10 +196,11 @@ void main(void) {
                 countCamion++;
             }
         }
-        if(!PORTBbits.RB3){
-            __delay_ms(40);
+        old_RB2 = PORTBbits.RB2;
+        if(!PORTBbits.RB3 && old_RB3){
+            
             int valore = read_ADC(6);
-            __delay_ms(40);
+            
             if(valore < 250 && valore >= 0){
                 countMoto++;
             }else if(valore >250 && valore < 500){
@@ -188,36 +211,62 @@ void main(void) {
                 countCamion++;
             }
         }
+        old_RB3 = PORTBbits.RB3;
 
         
     }
     return;
 }
 
-
 void semafori(){
             switch(stato){
             case 0:
                 //PORTD = 0x22; // 1 Rosso  2 Verde
+                if(old_stato != stato){
+                old_stato = stato;
+                uart_print(0,0x02);  
+                uart_print(1,0x00);
+                }
+
             break;
             case 1:
                 //PORTD = 0x32;    //1 Rosso 2 Giallo
+                if(old_stato != stato){
+                old_stato = stato;
+                uart_print(0,0x02);  
+                uart_print(1,0x01);
+                }
             break;
             case 2:
             case 5:
                 //PORTD = 0x12;       //1Rosso 2Rosso
+                if(old_stato != stato){
+                old_stato = stato;
+                uart_print(0,0x02);  
+                uart_print(1,0x02);
+                }
             break;
             case 3:
                 // PORTD = 0x14;   //1 Verde 2 Rosso
+                if(old_stato != stato){
+                old_stato = stato;
+                uart_print(0,0x00);  
+                uart_print(1,0x02);
+                }
             break;
             case 4:
                 //PORTD = 0x16;   //1 Giallo 2 Rosso
+                if(old_stato != stato){
+                old_stato = stato;
+                uart_print(0,0x01);  
+                uart_print(1,0x02);
+                }
             break;
             
         }
 }
 void timer(){
-            TRISD = 0x00;
+        TRISD = 0x00;
         TRISA=0x00;
         
         switch(count_seg){
@@ -301,7 +350,7 @@ void __interrupt() ISR()
         {
             count = 0;
             cambio_tempo = 1;
-            
+            secondi ++;
             tempo ++; //incremento il tempo dei colori dei 2 semafori semaforo          
             if (tempo > tempi[stato]) //cambio dei colori della prima coppia dei semafori
             {
@@ -325,15 +374,15 @@ void init_ADC(){
     __delay_ms(10);
 }
 
-void uart_print(char *str)
+void uart_print(char sensore, char valore)
 {
-    int i=0;
-    
-    while(str[i] != '\0')
-    {
-        UART_TxChar(str[i]);
-        i++;
-    }
+    char byte1 = 0xF0 | sensore ;
+    char byte2 = id_incrocio;
+    char byte3 = valore;
+
+        UART_TxChar(byte1);
+        UART_TxChar(byte2);
+        UART_TxChar(byte3);
 }
 
 char *toString(int n){
