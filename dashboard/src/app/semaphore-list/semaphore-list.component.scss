@@ -15,6 +15,17 @@
   .divider{
       margin: 20px;
   }
-  .action-buttons{
+  .actions{
       margin: 20px;
+      
   }
+  .searchbar{
+    flex-basis: 0;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    width: 700px;
+    display: block;
+  }
+  

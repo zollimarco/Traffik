@@ -1,8 +1,15 @@
-<div class="action-buttons">
-    <button mat-button (click)="accordion.openAll()">Expand All</button>
-    <button mat-button (click)="accordion.closeAll()">Collapse All</button>
-</div>
+<mat-form-field class="searchbar">
+    <mat-label><mat-icon>search</mat-icon> ID o Via...</mat-label>
+    <input matInput type="text" [(ngModel)]="search">
+    <button mat-button *ngIf="search" matSuffix mat-icon-button aria-label="Clear" (click)="search=''">
+        <mat-icon>close</mat-icon>
+    </button>
+</mat-form-field>
 <mat-divider class="divider"></mat-divider>
+<div class="actions">
+    <button mat-button (click)="accordion.openAll()">Espandi tutto</button>
+    <button mat-button color="warn" (click)="accordion.closeAll()">Chiudi tutto</button>
+</div>
 <mat-accordion class="headers-align" multi>
     <app-semaphore></app-semaphore>
 </mat-accordion>
