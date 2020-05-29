@@ -9,7 +9,16 @@ export class SemaphoreComponent implements OnInit {
 
   constructor() { }
 
+  // colore semaforo, gestione dello stato
+
+  n_vehicle = null;
+  humidity = null;
+  temperature = null;
+  atm_pressure = null;
+
   ngOnInit(): void {
+    // ottengo i valori 
+    // assegno i valori necessari
   }
 
 }
