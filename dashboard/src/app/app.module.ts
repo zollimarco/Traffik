@@ -12,13 +12,15 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatDividerModule} from '@angular/material/divider';
+import { SemaphoreMapComponent } from './semaphore-map/semaphore-map.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SemaphoreComponent,
     SemaphoreListComponent,
-    SearchBarComponent
+    SearchBarComponent,
+    SemaphoreMapComponent
   ],
   imports: [
     BrowserModule,
