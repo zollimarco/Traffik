@@ -1,4 +1,4 @@
-export class SemaphoreMap {
+ export class SemaphoreMap {
     coordinates:Coordinates;
     size: Size;
     zoom: number;
