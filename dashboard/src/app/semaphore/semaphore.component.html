@@ -12,13 +12,14 @@
     <div id="text">
         <div id="value">
             <p>Stato: </p>
-            <p>Veicoli (ultimo minuto): </p>
+            <p>Veicoli (ultimo minuto): {{n_vehicle}}</p>
             <p>Umidità: </p>
             <p>Temperatura: </p>
             <p>Pressione: </p>
         </div>
         <div id="btn">
-
+        <button class="mat-raised-button" (click)="edit()"><a>a</a></button>
+        <button class="mat-button" (click)="details()"><a>b</a></button>
         </div>
     </div>
 </mat-expansion-panel>

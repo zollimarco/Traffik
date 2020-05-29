@@ -21,4 +21,16 @@ export class SemaphoreComponent implements OnInit {
     // assegno i valori necessari
   }
 
+  edit() {
+    // ToDo
+    console.log("Modifica del semaforo");
+  };
+  
+  details() {
+      // ToDo
+      console.log("Dettagli");
+  }
+
 }
+
+
