@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-const configuration = require("config.json");
+//const configuration = require("config.json");
+import {Google_maps_key} from 'config.json';
 
 @Component({
   selector: 'app-semaphore-map',
@@ -13,7 +14,9 @@ export class SemaphoreMapComponent implements OnInit {
   ngOnInit(): void {
     let latitude = 0;
     let longitude = 0;
-    this.image_url = "https://maps.googleapis.com/maps/api/staticmap?center={0},{1}&zoom=1&size=100x100&key={2}", latitude, longitude, configuration.Google_maps_key;
+    console.log(Google_maps_key);
+    this.image_url = "https://maps.googleapis.com/maps/api/staticmap?center=" + latitude.toString() +
+    ","+ longitude.toString() + "&zoom=1&size=100x100&key=" + Google_maps_key;
   }
 
 }
