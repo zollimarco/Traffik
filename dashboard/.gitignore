@@ -46,4 +46,4 @@ testem.log
 Thumbs.db
 
 # Configuration Files
-config.json
+/config
