@@ -64,7 +64,7 @@ char str[5];// variabile string convertita
 
 //tempi dei semafori
 unsigned char DIM = 6;
-char tempi[6] = {5,2,2,5,2,2};
+int tempi[6] = {15,2,2,5,2,2};
 
 char tempo = 1;
 int stato;
@@ -94,9 +94,17 @@ void semafori();
 char minuti = 0;
 char secondi = 0;
 char old_RB0 ,old_RB1,old_RB2,old_RB3;
+char ValoreScalato1,ValoreScalato2;
+char scalatura_temperatura(char);
+char scalatura_pressione(char);
+
+//ricezione dati
+char byte1,byte2,byte3;
+char datoarrivato = 0;
+
 
 void main(void) {
-    TRISD = 0x00;
+    TRISD = 0x00; //imposto il registro a 00 per poter leggere gli slider
     PORTD = 0x00;
     
     UART_init(9600); //inizializzo la ricezione del terminale
@@ -111,10 +119,14 @@ void main(void) {
     stato = 0; //stato semaforo1
     
     old_stato = stato;
+    char temperatura;
+    char umidita;
+    int pressione;
+    TRISB = 0xFF;
     
     while(1)
     {
-        if(secondi >=10){
+        if(secondi >=60){
             minuti ++;
             secondi = 0;
             uart_print(0x07,countMoto);
@@ -127,6 +139,20 @@ void main(void) {
             countAutobus = 0;
             countCamion = 0;
 
+        }
+        
+            
+        
+        if(minuti >= 15){
+            TRISA = 0xFF;
+            minuti = 0;
+            temperatura = read_ADC(0) >> 2;
+            ValoreScalato1 = scalatura_temperatura(temperatura);
+            umidita = read_ADC(1) >> 2;
+            UART_TxChar(umidita / 2.55); // da 0 a 100
+            pressione = read_ADC(0) >> 2;
+            ValoreScalato2 = scalatura_pressione(pressione);
+            UART_TxChar(ValoreScalato2);
         }
           count_seg++;
             
@@ -141,16 +167,22 @@ void main(void) {
         
         //timer 7 segmenti
         timer();
-
+        
         //stati dei semafori
         //semafori();
         
-        TRISD = 0x00;//imposto il registro a 00 per poter leggere gli slider
-        //char a = toString(countMoto);
-        //uart_print(a);
-        //char a = toString(stato);
-        //uart_print(a);
-        TRISB = 0xFF;
+        if(datoarrivato == 1){
+            if(byte1 == 0){
+                tempi[byte2] = byte3;
+                
+            }
+            UART_TxChar(byte1);
+                UART_TxChar(byte2);
+                UART_TxChar(byte3);
+            datoarrivato = 0;
+        }
+        
+       
         
         if(!PORTBbits.RB0 && old_RB0){
             int valore = read_ADC(3);
@@ -216,6 +248,31 @@ void main(void) {
         
     }
     return;
+}
+
+char scalatura_temperatura(char dato)
+{
+    char valoremin = 0;
+    char valoremax = 255;
+    char A = 0;
+    char B = 65;
+    char valore;
+    
+    valore = ((dato - valoremin) * (B - A))/((valoremax - valoremin) + A);
+    
+    return valore;
+}
+char scalatura_pressione(char dato)
+{
+    char valoremin = 0;
+    char valoremax = 255;
+    char A = 0;
+    char B = 215;
+    char valore;
+    
+    valore = ((dato - valoremin) * (B - A))/((valoremax - valoremin) + A);
+    
+    return valore;
 }
 
 void semafori(){
@@ -305,15 +362,15 @@ void timer(){
                     valore2 = tempi[stato] - tempo;     //verde e giallo s2
                     break;
                 case 3:
-                    valore2 = (tempi[0] + tempi[1] + tempi[2]) - tempo; //rosso s2
+                    valore2 = (tempi[3] + tempi[4] + tempi[5]) - tempo; //rosso s2
                     valore = tempi[stato] - tempo; //verde e giallo s1
                     break;
                 case 4:
-                    valore2 = (tempi[1] + tempi[2]) - tempo; //rosso s2
+                    valore2 = (tempi[4] + tempi[5]) - tempo; //rosso s2
                     valore = tempi[stato] - tempo; //verde e giallo s1
                     break;
                 case 5:
-                    valore2 = (tempi[2]) - tempo; //rosso s2
+                    valore2 = (tempi[5]) - tempo; //rosso s2
                     valore = tempi[stato] - tempo; //verde e giallo s1
                     break;
             }
@@ -364,6 +421,21 @@ void __interrupt() ISR()
         }
     }
     TMR0 = 131;
+    
+    if(RCIF)
+    {
+        while(!RCIF);
+        RCIF = 0;
+        byte1 = RCREG;
+        while(!RCIF);
+        RCIF = 0;
+        byte2 = RCREG;
+        while(!RCIF);
+        RCIF = 0;
+        byte3 = RCREG;
+        datoarrivato = 1;
+    }
+    
     return;
 }
 
