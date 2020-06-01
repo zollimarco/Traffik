@@ -141,29 +141,27 @@ void main(void) {
 
         }
         
+            //pressione = read_ADC(3) >> 2;
+            //ValoreScalato2 = scalatura_pressione(pressione);
+            //UART_TxChar(ValoreScalato2);
             
-        
-        if(minuti >= 15){
-            TRISA = 0xFF;
+            
+        if(secondi >= 5){
+            secondi = 0;
             minuti = 0;
             temperatura = read_ADC(0) >> 2;
             ValoreScalato1 = scalatura_temperatura(temperatura);
             umidita = read_ADC(1) >> 2;
             UART_TxChar(umidita / 2.55); // da 0 a 100
-            pressione = read_ADC(0) >> 2;
+            pressione = read_ADC(3) >> 2;
             ValoreScalato2 = scalatura_pressione(pressione);
             UART_TxChar(ValoreScalato2);
+            TRISD = 0x00;
         }
           count_seg++;
             
          if(count_seg>3)
              count_seg=0;
-        
-        PORTCbits.RC0 = 1;
-        PORTCbits.RC1 = 1;
-        
-        //PORTCbits.RC5 = 1;
-        //PORTCbits.RC6 = 1;
         
         //timer 7 segmenti
         timer();
@@ -278,7 +276,10 @@ char scalatura_pressione(char dato)
 void semafori(){
             switch(stato){
             case 0:
-                //PORTD = 0x22; // 1 Rosso  2 Verde
+                // 1 Rosso  2 Verde.
+                PORTC = 0x21;
+                
+
                 if(old_stato != stato){
                 old_stato = stato;
                 uart_print(0,0x02);  
@@ -288,6 +289,8 @@ void semafori(){
             break;
             case 1:
                 //PORTD = 0x32;    //1 Rosso 2 Giallo
+                PORTC = 0x25;
+                
                 if(old_stato != stato){
                 old_stato = stato;
                 uart_print(0,0x02);  
@@ -296,7 +299,9 @@ void semafori(){
             break;
             case 2:
             case 5:
-                //PORTD = 0x12;       //1Rosso 2Rosso
+                    //1Rosso 2Rosso
+                  PORTC = 0x05;
+                
                 if(old_stato != stato){
                 old_stato = stato;
                 uart_print(0,0x02);  
@@ -304,7 +309,8 @@ void semafori(){
                 }
             break;
             case 3:
-                // PORTD = 0x14;   //1 Verde 2 Rosso
+                //1 Verde 2 Rosso
+                PORTC = 0x06;
                 if(old_stato != stato){
                 old_stato = stato;
                 uart_print(0,0x00);  
@@ -312,7 +318,9 @@ void semafori(){
                 }
             break;
             case 4:
-                //PORTD = 0x16;   //1 Giallo 2 Rosso
+                //1 Giallo 2 Rosso
+                PORTC = 0x07;
+                
                 if(old_stato != stato){
                 old_stato = stato;
                 uart_print(0,0x01);  
@@ -324,7 +332,7 @@ void semafori(){
 }
 void timer(){
         TRISD = 0x00;
-        TRISA=0x00;
+        TRISA = 0x00;
         
         switch(count_seg){
             case 0:  //display 1
@@ -490,6 +498,7 @@ char *toString(int n){
 
 int read_ADC(int canale)
 {
+    TRISA = 0xFF;
     ADCON0 = 0b00000001;//ADCON0 = & 0b11000111;
     ADCON0= ADCON0 | canale<<3;
     ADCON0=ADCON0 | 0b00000100;    
