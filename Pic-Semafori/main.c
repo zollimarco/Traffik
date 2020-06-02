@@ -154,11 +154,12 @@ void main(void) {
             minuti = 0;
             temperatura = read_ADC(0) >> 2;
             ValoreScalato1 = scalatura_temperatura(temperatura);
+            uart_print(0x02,ValoreScalato1);
             umidita = read_ADC(1) >> 2;
-            UART_TxChar(umidita / 2.55); // da 0 a 100
+            uart_print(0x03,umidita / 2.55);
             pressione = read_ADC(3) >> 2;
             ValoreScalato2 = scalatura_pressione(pressione);
-            UART_TxChar(ValoreScalato2);
+            uart_print(0x04,ValoreScalato2);
             TRISD = 0x00;
         }
           count_seg++;
