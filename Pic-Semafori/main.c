@@ -67,7 +67,7 @@ char str[5];// variabile string convertita
 
 //tempi dei semafori
 unsigned char DIM = 6;
-int tempi[6] = {15,2,2,5,2,2};
+int tempi[6] = {0,0,0,0,0,0};
 
 char tempo = 1;
 int stato=0;
@@ -107,6 +107,8 @@ char datoarrivato = 0;
 
 char pedoni1=0,pedoni2=0;
 
+char primaconfigurazione = 0;
+
 void main(void) {
     TRISD = 0x00; //imposto il registro a 00 per poter leggere gli slider
     PORTD = 0x00;
@@ -130,6 +132,8 @@ void main(void) {
     
     while(1)
     {
+        if(primaconfigurazione)
+        {
         if(secondi >=60){
             minuti ++;
             secondi = 0;
@@ -176,16 +180,7 @@ void main(void) {
         
         
         
-        if(datoarrivato == 1){
-            if(byte1 == 0){
-                tempi[byte2] = byte3;
-                
-            }
-            UART_TxChar(byte1);
-                UART_TxChar(byte2);
-                UART_TxChar(byte3);
-            datoarrivato = 0;
-        }
+        
         
        
         
@@ -269,6 +264,22 @@ void main(void) {
             
         }
         old_RB5 = PORTBbits.RB5;
+        }
+        else
+        {
+            primaconfigurazione=1;
+            for(char i =0;i<DIM;i++)
+                if(tempi[i]==0)
+                    primaconfigurazione=0;
+        }
+        if(datoarrivato == 1){
+            if(byte1 == 0){
+                tempi[byte2] = byte3;
+                
+            }
+            
+            datoarrivato = 0;
+        }
     }
     return;
 }
@@ -433,6 +444,8 @@ void __interrupt() ISR()
     if (INTCON&0x04)
     {
         INTCON &= ~0x04;
+        if(primaconfigurazione)
+        {
         count++;
         //7 Segemnti
         if(okadc)
@@ -458,6 +471,7 @@ void __interrupt() ISR()
                 }  
                 
             }
+        }
         }
     }
     TMR0 = 131;
