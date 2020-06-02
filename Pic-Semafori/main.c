@@ -70,7 +70,7 @@ unsigned char DIM = 6;
 int tempi[6] = {15,2,2,5,2,2};
 
 char tempo = 1;
-int stato;
+int stato=0;
 int count;
 char decine, unita;
 
@@ -96,7 +96,7 @@ void semafori();
 //invio sensori
 char minuti = 0;
 char secondi = 0;
-char old_RB0 ,old_RB1,old_RB2,old_RB3;
+char old_RB0 ,old_RB1,old_RB2,old_RB3,old_RB4,old_RB5;
 char ValoreScalato1,ValoreScalato2;
 char scalatura_temperatura(char);
 char scalatura_pressione(char);
@@ -105,6 +105,7 @@ char scalatura_pressione(char);
 char byte1,byte2,byte3;
 char datoarrivato = 0;
 
+char pedoni1=0,pedoni2=0;
 
 void main(void) {
     TRISD = 0x00; //imposto il registro a 00 per poter leggere gli slider
@@ -121,7 +122,7 @@ void main(void) {
     count = 0;
     stato = 0; //stato semaforo1
     
-    old_stato = stato;
+    old_stato = 99;
     char temperatura;
     char umidita;
     int pressione;
@@ -149,13 +150,12 @@ void main(void) {
             //UART_TxChar(ValoreScalato2);
             
             
-        if(secondi >= 5){
-            secondi = 0;
+        if(minuti >= 15){
             minuti = 0;
             temperatura = read_ADC(0) >> 2;
             ValoreScalato1 = scalatura_temperatura(temperatura);
-           // umidita = read_ADC(1) >> 2;
-            //UART_TxChar(umidita / 2.55); // da 0 a 100
+            umidita = read_ADC(1) >> 2;
+            UART_TxChar(umidita / 2.55); // da 0 a 100
             pressione = read_ADC(3) >> 2;
             ValoreScalato2 = scalatura_pressione(pressione);
             UART_TxChar(ValoreScalato2);
@@ -166,11 +166,14 @@ void main(void) {
          if(count_seg>3)
              count_seg=0;
         
+          if(old_stato != stato)
+          //stati dei semafori
+        semafori();
+          
         //timer 7 segmenti
         timer();
         
-        //stati dei semafori
-        //semafori();
+        
         
         if(datoarrivato == 1){
             if(byte1 == 0){
@@ -244,9 +247,27 @@ void main(void) {
                 countCamion++;
             }
         }
-        old_RB3 = PORTBbits.RB3;
-
         
+        old_RB3 = PORTBbits.RB3;
+        if(!PORTBbits.RB4 && old_RB4){
+            UART_TxChar('a');
+            if(stato==0 && tempi[stato]-tempo>10 && pedoni1==0)
+            {
+                tempo+=5;
+                pedoni1=1;
+            }
+        }
+        old_RB4 = PORTBbits.RB4;
+        
+        if(!PORTBbits.RB5 && old_RB5){
+            if(stato==3 && tempi[stato]-tempo>10 && pedoni2==0)
+            {
+                tempo+=5;
+                pedoni2=1;
+            }
+            
+        }
+        old_RB5 = PORTBbits.RB5;
     }
     return;
 }
@@ -429,6 +450,8 @@ void __interrupt() ISR()
             {
                 tempo = 1; 
                 stato ++;    //incremento lo stato del semaforo
+                pedoni1=0;
+                pedoni2=0;
                 if (stato >= DIM){  
                     stato = 0; //torno al verde
                 }  
