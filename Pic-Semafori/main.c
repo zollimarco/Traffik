@@ -55,6 +55,9 @@ const char id_incrocio = 0x00;
 void init_ADC(); //inizializzazione degli slider
 int read_ADC(int canale); //lettura valore slider
 
+char okadc=0; //variabili di attesa per la lettura degli slider
+char countadc=0;
+
 void UART_init(int); // inizializzo la comunicazione con la seriale
 void UART_TxChar(char); // invio una dato al terminale
 void uart_print(char,char);
@@ -151,8 +154,8 @@ void main(void) {
             minuti = 0;
             temperatura = read_ADC(0) >> 2;
             ValoreScalato1 = scalatura_temperatura(temperatura);
-            umidita = read_ADC(1) >> 2;
-            UART_TxChar(umidita / 2.55); // da 0 a 100
+           // umidita = read_ADC(1) >> 2;
+            //UART_TxChar(umidita / 2.55); // da 0 a 100
             pressione = read_ADC(3) >> 2;
             ValoreScalato2 = scalatura_pressione(pressione);
             UART_TxChar(ValoreScalato2);
@@ -410,6 +413,11 @@ void __interrupt() ISR()
         INTCON &= ~0x04;
         count++;
         //7 Segemnti
+        if(okadc)
+            countadc++;
+        if(countadc>1)
+            okadc=0;
+        
         
         if (count > 500) //interrupt si attiva ogni 2ms quindi mettendo 500 entra ogni 1 secondo
         {
@@ -499,12 +507,20 @@ char *toString(int n){
 int read_ADC(int canale)
 {
     TRISA = 0xFF;
+    
+    okadc=1;
+    while(okadc)
+    {
+    }
+    
     ADCON0 = 0b00000001;//ADCON0 = & 0b11000111;
     ADCON0= ADCON0 | canale<<3;
     ADCON0=ADCON0 | 0b00000100;    
     while(ADCON0 & 0b00000100)
     {}
     int valore = ADRESL+(ADRESH<<8);
+    okadc=0;
+    countadc=0;
     return valore;
 }
 
