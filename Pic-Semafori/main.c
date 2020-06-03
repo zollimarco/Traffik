@@ -247,7 +247,6 @@ void main(void) {
         
         old_RB3 = PORTBbits.RB3;
         if(!PORTBbits.RB4 && old_RB4){
-            UART_TxChar('a');
             if(stato==0 && tempi[stato]-tempo>10 && pedoni1==0)
             {
                 tempo+=5;
