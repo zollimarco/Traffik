@@ -67,8 +67,8 @@ char str[5];// variabile string convertita
 
 //tempi dei semafori
 unsigned char DIM = 6;
-int tempi[6] = {0,0,0,0,0,0};
-char primaconfigurazione = 0;
+int tempi[6] = {10,5,3,10,5,3};
+char primaconfigurazione = 1;
 
 char tempo = 1;
 int stato=0;
@@ -107,7 +107,7 @@ char byte1,byte2,byte3;
 char datoarrivato = 0;
 
 char pedoni1=0,pedoni2=0;
-
+char secondiPrimaConfigurazione=30;
 
 
 void main(void) {
@@ -273,6 +273,14 @@ void main(void) {
                 if(tempi[i]==0)
                     primaconfigurazione=0;
         }
+        
+        if(!primaconfigurazione && secondiPrimaConfigurazione==30)
+        {
+            secondiPrimaConfigurazione=0;
+            uart_print(9,0);
+            secondiPrimaConfigurazione=0;
+        }
+        
         if(datoarrivato == 1){
             if(byte1 == 0){
                 tempi[byte2] = byte3;
@@ -460,34 +468,38 @@ void __interrupt() ISR()
     if (INTCON&0x04)
     {
         INTCON &= ~0x04;
-        if(primaconfigurazione)
-        {
-        count++;
-        //7 Segemnti
-        if(okadc)
-            countadc++;
-        if(countadc>1)
-            okadc=0;
         
-        
+            count++;
+            //7 Segemnti
+            if(okadc)
+                countadc++;
+            if(countadc>1)
+                okadc=0;
+
+
         if (count > 500) //interrupt si attiva ogni 2ms quindi mettendo 500 entra ogni 1 secondo
         {
-            count = 0;
-            cambio_tempo = 1;
-            secondi ++;
-            tempo ++; //incremento il tempo dei colori dei 2 semafori semaforo          
-            if (tempo > tempi[stato]) //cambio dei colori della prima coppia dei semafori
-            {
-                tempo = 1; 
-                stato ++;    //incremento lo stato del semaforo
-                pedoni1=0;
-                pedoni2=0;
-                if (stato >= DIM){  
-                    stato = 0; //torno al verde
-                }  
                 
+            count = 0;
+            if(!primaconfigurazione)
+                secondiPrimaConfigurazione++;
+            if(primaconfigurazione)
+            {
+                cambio_tempo = 1;
+                secondi ++;
+                tempo ++; //incremento il tempo dei colori dei 2 semafori semaforo          
+                if (tempo > tempi[stato]) //cambio dei colori della prima coppia dei semafori
+                {
+                    tempo = 1; 
+                    stato ++;    //incremento lo stato del semaforo
+                    pedoni1=0;
+                    pedoni2=0;
+                    if (stato >= DIM){  
+                        stato = 0; //torno al verde
+                    }  
+
+                }
             }
-        }
         }
     }
     TMR0 = 131;
