@@ -68,6 +68,7 @@ char str[5];// variabile string convertita
 //tempi dei semafori
 unsigned char DIM = 6;
 int tempi[6] = {0,0,0,0,0,0};
+char primaconfigurazione = 0;
 
 char tempo = 1;
 int stato=0;
@@ -107,7 +108,7 @@ char datoarrivato = 0;
 
 char pedoni1=0,pedoni2=0;
 
-char primaconfigurazione = 0;
+
 
 void main(void) {
     TRISD = 0x00; //imposto il registro a 00 per poter leggere gli slider
@@ -420,20 +421,35 @@ void timer(){
             }
             
             if(valore < 10) {
-            decine_s1 = 0;
-            unita_s1 = valore;
+                decine_s1 = 0;
+                unita_s1 = valore;
             
             }else{
-                decine_s1 = valore /10;
-                unita_s1 = valore % 10;
+                if(valore<99)
+                {
+                    decine_s1 = valore /10;
+                    unita_s1 = valore % 10;
+                }
+                else
+                {
+                    decine_s1 = 9;
+                    unita_s1 = 9;
+                }
             }
             if(valore2 < 10) {
-            decine_s2 = 0;
-            unita_s2 = valore2;
+                decine_s2 = 0;
+                unita_s2 = valore2;
             
             }else{
-                decine_s2 = valore2 /10;
-                unita_s2 = valore2 % 10;
+                if(valore2<99)
+                {
+                    decine_s2 = valore2 /10;
+                    unita_s2 = valore2 % 10;
+                }else
+                {
+                    decine_s2 = 9;
+                    unita_s2 = 9;
+                }
             }
             
         }
