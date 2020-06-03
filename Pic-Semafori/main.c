@@ -67,8 +67,8 @@ char str[5];// variabile string convertita
 
 //tempi dei semafori
 unsigned char DIM = 6;
-int tempi[6] = {10,5,3,10,5,3};
-char primaconfigurazione = 1;
+int tempi[6] = {0,0,0,0,0,0};
+char primaconfigurazione = 0;
 
 char tempo = 1;
 int stato=0;
