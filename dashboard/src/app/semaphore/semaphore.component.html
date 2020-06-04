@@ -8,5 +8,14 @@
             Via vai
         </mat-panel-description>
     </mat-expansion-panel-header>
-    <app-semaphore-map></app-semaphore-map>
+    <mat-grid-list cols="2" rowHeight="300px" style="padding-left: 0">
+        <mat-grid-tile>
+            <app-semaphore-map></app-semaphore-map>
+        </mat-grid-tile>
+        <mat-grid-tile class="data-mat-figure">
+            <div class="panel-data">
+                <strong>Stato:</strong>  <mat-icon color="warn">stop_circle</mat-icon><mat-icon color="primary">stop_circle</mat-icon>
+            </div>
+        </mat-grid-tile>
+      </mat-grid-list>
 </mat-expansion-panel>
