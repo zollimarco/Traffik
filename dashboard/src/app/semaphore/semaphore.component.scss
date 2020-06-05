@@ -7,7 +7,13 @@
 .panel-data {
     align-self: start;
     position: absolute;
-    left: 10px;
+    left: 20px;
+    font-size: medium;
+    line-height: 2em;
+}
+
+button a {
+    font-size: large;
 }
 
 #edit {
@@ -17,6 +23,7 @@
 
 #edit a {
     color: white;
+
 }
 
 #details {
