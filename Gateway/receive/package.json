@@ -1,0 +1,14 @@
+{
+  "name": "receive",
+  "version": "1.0.0",
+  "description": "Data recievere and parser from PIC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicola Pozza",
+  "license": "ISC",
+  "dependencies": {
+    "serialport": "^9.0.0"
+  }
+}
