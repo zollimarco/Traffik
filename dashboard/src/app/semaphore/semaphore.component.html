@@ -12,14 +12,18 @@
         <mat-grid-tile>
             <app-semaphore-map></app-semaphore-map>
         </mat-grid-tile>
-        <mat-grid-tile class="data-mat-figure">
+        <mat-grid-tile>
             <div class="panel-data">
-                <strong>Stato:</strong>  <mat-icon color="warn">stop_circle</mat-icon><mat-icon color="primary">stop_circle</mat-icon>
+                <p><strong>Stato:</strong>  <mat-icon color="warn">stop_circle</mat-icon><mat-icon color="primary">stop_circle</mat-icon></p>
+                <p><strong>Veicoli (ultimo minuto):</strong>  {{n_vehicle}}</p>
+                <p><strong>Umidità:</strong>  {{humidity}}</p>
+                <p><strong>Temperatura:</strong>   {{temperature}}</p>
+                <p><strong>Pressione:</strong>   {{atm_pressure}}</p>
             </div>
+            <mat-grid-tile-footer style="background-color: transparent;">
+                <button id="edit" class="mat-raised-button btn" (click)="edit()"><a>Modifica</a></button>
+                <button id="details" class="mat-button btn" (click)="details()"><a>Dettagli ></a></button>
+            </mat-grid-tile-footer>
         </mat-grid-tile>
       </mat-grid-list>
-        <div id="btn">
-        <button id="edit" class="mat-raised-button" (click)="edit()"><a>Modifica</a></button>
-        </div>
-        <button id="details" class="mat-button" (click)="details()"><a>Dettagli ></a></button>
 </mat-expansion-panel>

@@ -4,12 +4,13 @@
     width: 90%;
 }
 
-#btn {
-    padding-top: 20px;
+.panel-data {
+    align-self: start;
+    float: left;
 }
 
-#btn a {
-    font-size: 1.6em;
+.btn {
+    padding-top: 20px;
 }
 
 #edit {
@@ -21,7 +22,8 @@
 }
 
 #details {
-    float: right;
+    position: relative;
+    text-align: right;
 }
 
 #details a {
