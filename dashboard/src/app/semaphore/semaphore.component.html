@@ -24,10 +24,13 @@
                 <p><strong>Pressione:</strong> {{atm_pressure}}</p>
             </div>
             <mat-grid-tile-footer style="background-color: transparent;">
-                <mat-grid-list cols="2" rowHeight="30px" style="padding-left: 0">
-                    <button id="edit" class="mat-raised-button btn" (click)="edit()"><a>Modifica <mat-icon class="mat-edit-icon">edit</mat-icon></a></button>
-                    <button id="details" class="mat-button btn" (click)="details()"><a>Dettagli ></a></button>
-                </mat-grid-list>
+                    <div id="left">
+                        <button id="edit" class="mat-raised-button btn" (click)="edit()"><a>Modifica <mat-icon
+                                    class="mat-edit-icon">edit</mat-icon></a></button>
+                    </div>
+                    <div id="right">
+                        <button id="details" class="mat-button btn" (click)="details()"><a>Dettagli ></a></button>
+                    </div>
             </mat-grid-tile-footer>
         </mat-grid-tile>
     </mat-grid-list>
