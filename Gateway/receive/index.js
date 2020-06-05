@@ -1,3 +1,17 @@
+const redis = require("redis");
+let redisNotReady = true;
+let client = redis.createClient({
+    host: '127.0.0.1',
+    port: 6379
+});
+client.on("error", (err) => {
+   console.log("error", err)
+});
+client.on("connect", (err) => {
+    console.log("connect");
+        //se si connette riceve e invia i dati
+});
+
 const SerialPort = require('serialport')
 const ByteLength = require('@serialport/parser-byte-length')
 const port = new SerialPort('/dev/ttyS0')
@@ -30,12 +44,34 @@ function parseMsg(data){
 
         if(gateway == '1111'){
 
-        json = {
+       		if(sensore = "0010"){ 
+		valore -= 20;
+		}
+		if(sensore = "0100"){
+		valore += 870;
+		}
+	json = {
         "id_incrocio":id,
-        "Semaforo": sensore,
+        "Sensore": sensore,
         "Valore":valore
         };
 
+	client.on("ready", (err) => {
+	redisNotReady = false;
+        client.rpush("dati", json);
+
+        client.llen("dati", function(err, data)
+        {
+                console.log("Lunghezza della lista: "+data);
+        });
+
+        //elimina l'elemento in coda e restituisce l'elemento eliminato
+        client.lpop("dati", function(err, data)
+        {
+                console.log(data);
+        });
+
+});
 
         }
         console.log(json);
