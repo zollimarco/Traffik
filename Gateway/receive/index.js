@@ -12,6 +12,11 @@ client.on("connect", (err) => {
         //se si connette riceve e invia i dati
 });
 
+client.on("ready", (err) => {
+       redisNotReady = false;
+
+ });
+
 const SerialPort = require('serialport')
 const ByteLength = require('@serialport/parser-byte-length')
 const port = new SerialPort('/dev/ttyS0')
@@ -27,14 +32,6 @@ function parseMsg(data){
         let msgSize = data.lenght;
 
         let byte0 = parseInt(data[0],10).toString(2).padStart(8,'0');
-        //let byte1 = parseInt(data[1],10).toString(2).padStart(8,'0');
-        //let byte2 = parseInt(data[2],10).toString(2).padStart(8,'0');
-
-
-        //console.log("byte 1 ",byte0); //gateway + id sensore
-        //console.log("byte 2 ",byte1); //id incrocio
-        //console.log("byte 3 ",byte2); //valore
-        //console.log("---------------");
 
         let gateway = byte0.substring(0,4); //prende i primi 4 bit
         let sensore = byte0.substring(4);  //prende il resto dei bit
@@ -42,7 +39,7 @@ function parseMsg(data){
         var valore = data[2];
         let json = {};
 
-        if(gateway == '1111'){
+       if(gateway == '1111'){
 
        		if(sensore = "0010"){ 
 		valore -= 20;
@@ -56,13 +53,11 @@ function parseMsg(data){
         "Valore":valore
         };
 
-	client.on("ready", (err) => {
-	redisNotReady = false;
-        client.rpush("dati", json);
+	client.rpush("dati", json.toString());
 
         client.llen("dati", function(err, data)
         {
-                console.log("Lunghezza della lista: "+data);
+                console.log("Lunghezza della lista: "+ data);
         });
 
         //elimina l'elemento in coda e restituisce l'elemento eliminato
@@ -71,8 +66,8 @@ function parseMsg(data){
                 console.log(data);
         });
 
-});
+
 
         }
-        console.log(json);
+       // console.log(json);
 }
