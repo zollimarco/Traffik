@@ -6,15 +6,13 @@
 
 .panel-data {
     align-self: start;
-    float: left;
-}
-
-.btn {
-    padding-top: 20px;
+    position: absolute;
+    left: 10px;
 }
 
 #edit {
     background-color: #94CBE6;
+    position: absolute;
 }
 
 #edit a {
@@ -22,8 +20,8 @@
 }
 
 #details {
-    position: relative;
-    text-align: right;
+    position: absolute;
+    left: 600px;
 }
 
 #details a {
