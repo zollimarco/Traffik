@@ -35,16 +35,17 @@ function parseMsg(data){
 
         let gateway = byte0.substring(0,4); //prende i primi 4 bit
         let sensore = byte0.substring(4);  //prende il resto dei bit
+	
         var id = data[1];
         var valore = data[2];
         let json = {};
 
-       if(gateway == '1111'){
+       //if(gateway == '1111'){
 
-       		if(sensore = "0010"){ 
+       		if(sensore === "0010"){ 
 		valore -= 20;
 		}
-		if(sensore = "0100"){
+		if(sensore === "0100"){
 		valore += 870;
 		}
 	json = {
@@ -52,8 +53,8 @@ function parseMsg(data){
         "Sensore": sensore,
         "Valore":valore
         };
-
-	client.rpush("dati", json.toString());
+	//console.log(json);
+	client.rpush("dati", JSON.stringify(json));
 
         client.llen("dati", function(err, data)
         {
@@ -61,13 +62,13 @@ function parseMsg(data){
         });
 
         //elimina l'elemento in coda e restituisce l'elemento eliminato
-        client.lpop("dati", function(err, data)
-        {
-                console.log(data);
-        });
+        //client.lpop("dati", function(err, data)
+        //{
+        //        console.log(data);
+        //});
 
 
 
         }
        // console.log(json);
-}
+//}
