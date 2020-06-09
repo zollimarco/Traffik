@@ -19,12 +19,22 @@ client.on("ready", (err) => {
 
 const SerialPort = require('serialport')
 const ByteLength = require('@serialport/parser-byte-length')
-const port = new SerialPort('/dev/ttyS0')
+const port = new SerialPort('/dev/ttyS0', {baudRate: 115200})
 
 const parser = port.pipe(new ByteLength({length:3 }))
 parser.on('data', parseMsg) // will have 8 bytes per data event
 
 const gatewayDef = '1111';
+
+let byte1 = '00';
+let byte2 = '01';
+let byte3 = '0A';
+
+port.write(byte1,'hex');
+port.write(byte2,'hex');
+port.write(byte3,'hex');
+
+
 
 function parseMsg(data){
         //console.log(data[1]);
