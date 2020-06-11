@@ -16,6 +16,7 @@ import {MatDividerModule} from '@angular/material/divider';
 import { SemaphoreMapComponent } from './semaphore-map/semaphore-map.component';
 import {MatInputModule} from '@angular/material/input';
 import {MatGridListModule} from '@angular/material/grid-list';
+import {HttpClientModule} from '@angular/common/http'
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import {MatGridListModule} from '@angular/material/grid-list';
     MatIconModule,
     MatDividerModule,
     MatInputModule,
-    MatGridListModule
+    MatGridListModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
