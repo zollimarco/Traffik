@@ -1,4 +1,4 @@
-const redis = require("redis");
+const redis = require('redis');
 let redisNotReady = true;
 let client = redis.createClient({
     host: '127.0.0.1',
