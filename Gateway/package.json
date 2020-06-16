@@ -1,0 +1,11 @@
+{
+    "name": "name",
+    "description": "description",
+    "authors": "author",
+    "version": "1.0.0",
+    "main": "pathToMain",
+    "dependencies": {
+        "influx": "^5.5.1",
+        "@azure/event-hubs": "^5.0.0"
+    }
+}

@@ -14,7 +14,7 @@
 #pragma config CP = OFF  
 
 #include <xc.h>
-
+#include "tempo.c"
 // 7 Segmenti
 
 #define SEGMENT_A 0x01
@@ -108,7 +108,10 @@ char datoarrivato = 0;
 
 char pedoni1=0,pedoni2=0;
 char secondiPrimaConfigurazione=30;
-
+//tempo ora
+unsigned char tmp;
+volatile char date[10];
+volatile char time[10];
 
 void main(void) {
     TRISD = 0x00; //imposto il registro a 00 per poter leggere gli slider
@@ -288,6 +291,34 @@ void main(void) {
             
             datoarrivato = 0;
         }
+        
+        //Tempo / ora   
+      i2c_start();
+      i2c_wb(0xD0);
+      i2c_wb(0);
+
+      i2c_start();
+      i2c_wb(0xD1);
+
+      tmp= 0x7F & i2c_rb(1); //segundos
+      time[5]=':';
+      time[6]=getd(tmp);
+      time[7]=getu(tmp);
+      time[8]=0;
+
+      tmp= 0x7F & i2c_rb(1); //minutos
+      time[2]=':';
+      time[3]=getd(tmp);
+      time[4]=getu(tmp);
+
+      tmp= 0x3F & i2c_rb(1); //horas
+      time[0]=getd(tmp);
+      time[1]=getu(tmp);
+
+      i2c_stop();
+
+          UART_TxChar(time[0]);
+          UART_TxChar(time[1]);
     }
     return;
 }
