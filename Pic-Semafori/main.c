@@ -68,9 +68,9 @@ char str[5];// variabile string convertita
 //tempi dei semafori
 unsigned char DIM = 6;
 int tempi[6] = {0,0,0,0,0,0};
-char primaconfigurazione = 0;
+char primaconfigurazione = 1;
 
-char tempo = 1;
+char tempo = 0;
 int stato=0;
 int count;
 char decine, unita;
@@ -112,8 +112,26 @@ char secondiPrimaConfigurazione=30;
 unsigned char tmp;
 volatile char date[10];
 volatile char time[10];
+char fascia_oraria [2][23];
+char indice_fascia;
+char rosso_comune = 2;
+char giallo = 2;
+void *orario();
+
 
 void main(void) {
+    
+    //per test
+    char i,c;
+    
+    for(i = 0 ; i< 2 ;i++){
+        for(c = 0; c < 23;c++){
+            fascia_oraria[i][c] = 2;
+        }
+    }
+    
+    
+    
     TRISD = 0x00; //imposto il registro a 00 per poter leggere gli slider
     PORTD = 0x00;
     
@@ -162,9 +180,11 @@ void main(void) {
             minuti = 0;
             temperatura = read_ADC(0) >> 2;
             ValoreScalato1 = scalatura_temperatura(temperatura);
-            uart_print(0x02,ValoreScalato1);
+            uart_print(0x02,ValoreScalato1 * 3);
+            
             umidita = read_ADC(1) >> 2;
             uart_print(0x03,umidita / 2.55);
+            
             pressione = read_ADC(3) >> 2;
             ValoreScalato2 = scalatura_pressione(pressione);
             uart_print(0x04,ValoreScalato2);
@@ -172,21 +192,16 @@ void main(void) {
         }
           count_seg++;
             
-         if(count_seg>3)
+        if(count_seg>3)
              count_seg=0;
         
-          if(old_stato != stato)
-          //stati dei semafori
-        semafori();
+        if(old_stato != stato || stato == 6)
+            semafori();//stati dei semafori
           
         //timer 7 segmenti
         timer();
         
-        
-        
-        
-        
-       
+
         
         if(!PORTBbits.RB0 && old_RB0){
             int valore = read_ADC(3);
@@ -284,41 +299,13 @@ void main(void) {
         }
         
         if(datoarrivato == 1){
-            if(byte1 == 0){
-                tempi[byte2] = byte3;
+            
+            if(byte1 >> 4 == id_incrocio){   //controllo id incrocio    
+                fascia_oraria[(byte1 & 0x0F)][(byte2 & 0x1F)] = byte3;
                 
             }
-            
             datoarrivato = 0;
         }
-        
-        //Tempo / ora   
-      i2c_start();
-      i2c_wb(0xD0);
-      i2c_wb(0);
-
-      i2c_start();
-      i2c_wb(0xD1);
-
-      tmp= 0x7F & i2c_rb(1); //segundos
-      time[5]=':';
-      time[6]=getd(tmp);
-      time[7]=getu(tmp);
-      time[8]=0;
-
-      tmp= 0x7F & i2c_rb(1); //minutos
-      time[2]=':';
-      time[3]=getd(tmp);
-      time[4]=getu(tmp);
-
-      tmp= 0x3F & i2c_rb(1); //horas
-      time[0]=getd(tmp);
-      time[1]=getu(tmp);
-
-      i2c_stop();
-
-          UART_TxChar(time[0]);
-          UART_TxChar(time[1]);
     }
     return;
 }
@@ -353,12 +340,20 @@ void semafori(){
             case 0:
                 // 1 Rosso  2 Verde.
                 PORTC = 0x21;
+                    
+                orario();
+                    //UART_TxChar('-');
+                    //UART_TxChar(fascia_oraria[0][10]);
+                    
                 
-
+                    if (tempi[0] == 0 || tempi[3] == 0){
+                        stato = 6;
+                    }
+                    
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(0,0x02);  
-                uart_print(1,0x00);
+                //uart_print(0,0x02);  
+                //uart_print(1,0x00);
                 }
 
             break;
@@ -368,8 +363,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(0,0x02);  
-                uart_print(1,0x01);
+                //uart_print(0,0x02);  
+                //uart_print(1,0x01);
                 }
             break;
             case 2:
@@ -379,8 +374,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(0,0x02);  
-                uart_print(1,0x02);
+                //uart_print(0,0x02);  
+                //uart_print(1,0x02);
                 }
             break;
             case 3:
@@ -388,8 +383,8 @@ void semafori(){
                 PORTC = 0x06;
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(0,0x00);  
-                uart_print(1,0x02);
+                //uart_print(0,0x00);  
+                //uart_print(1,0x02);
                 }
             break;
             case 4:
@@ -398,13 +393,66 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(0,0x01);  
-                uart_print(1,0x02);
+               // uart_print(0,0x01);  
+               // uart_print(1,0x02);
                 }
             break;
+                case 6:
+                    if((secondi % 2) == 0){
+                        PORTC = 0x27;
+                    }
+                    else{
+                        PORTC = 0x00;
+                    }
+                    
+                    orario();
+                    if (tempi[0] != 0 && tempi[3] != 0){
+                        stato = 0;
+                    }
+                    break;
             
         }
 }
+
+void *orario(){
+                    
+    //Tempo / ora   
+    i2c_start();
+    i2c_wb(0xD0);
+    i2c_wb(0);
+
+    i2c_start();
+    i2c_wb(0xD1);
+
+    tmp= 0x7F & i2c_rb(1); //segundos
+    time[5]=':';
+    time[6]=getd(tmp);
+    time[7]=getu(tmp);
+    time[8]=0;
+
+    tmp= 0x7F & i2c_rb(1); //minutos
+    time[2]=':';
+    time[3]=getd(tmp);
+    time[4]=getu(tmp);
+
+    tmp= 0x3F & i2c_rb(1); //horas
+    time[0]=getd(tmp);
+    time[1]=getu(tmp);
+
+    i2c_stop();
+
+    indice_fascia = ((time[0]-48)*10) + (time[1]-48);
+
+    tempi[0] = fascia_oraria[1][indice_fascia];
+    tempi[1] = giallo;
+    tempi[2] = rosso_comune;
+    tempi[3] = fascia_oraria[0][indice_fascia];
+    tempi[4] = giallo;
+    tempi[5] = rosso_comune;
+    
+   // return tempi;
+}
+
 void timer(){
         TRISD = 0x00;
         TRISA = 0x00;
@@ -518,15 +566,17 @@ void __interrupt() ISR()
                 cambio_tempo = 1;
                 secondi ++;
                 tempo ++; //incremento il tempo dei colori dei 2 semafori semaforo          
-                if (tempo > tempi[stato]) //cambio dei colori della prima coppia dei semafori
+                if (tempo >= tempi[stato]) //cambio dei colori della prima coppia dei semafori
                 {
-                    tempo = 1; 
-                    stato ++;    //incremento lo stato del semaforo
-                    pedoni1=0;
-                    pedoni2=0;
-                    if (stato >= DIM){  
-                        stato = 0; //torno al verde
-                    }  
+                    if(stato != 6){
+                        tempo = 0; 
+                        stato ++;    //incremento lo stato del semaforo
+                        pedoni1=0;
+                        pedoni2=0;
+                        if (stato >= DIM){  
+                            stato = 0; //torno al verde
+                        }
+                    }
 
                 }
             }
