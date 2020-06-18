@@ -1,0 +1,3 @@
+{
+    "deviceConnectionString": "HostName=HubForApi.azure-devices.net;DeviceId=provaDevice;SharedAccessKey=SdOWeJRvW8cJB7CV7dRXm8cIuV1xOo+/Vw1cX5sTfEQ="
+}

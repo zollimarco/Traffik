@@ -46,8 +46,8 @@ function parseMsg(data){
 
         let gateway = byte0.substring(0,4); //prende i primi 4 bit
         let sensore = byte0.substring(4);  //prende il resto dei bit
-	let strada  = byte1.substring(0,4);
-	let id = byte1.substring(4);
+	let strada  = byte1.substring(4);
+	let id = byte1.substring(0,4);
 
         var valore = data[2];
         let json = {};
