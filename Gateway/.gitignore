@@ -2,7 +2,3 @@
 
 # dependencies
 node_modules/
-
-#
-# Configuration Files
-gateway-config.json
