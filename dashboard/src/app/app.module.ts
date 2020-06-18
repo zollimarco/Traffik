@@ -16,6 +16,9 @@ import {MatDividerModule} from '@angular/material/divider';
 import { SemaphoreMapComponent } from './semaphore-map/semaphore-map.component';
 import {MatInputModule} from '@angular/material/input';
 import {MatGridListModule} from '@angular/material/grid-list';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { url } from 'config/backend.json'
+const config: SocketIoConfig = { url: url.protocol + url.ip + url.port, options: {} };
 
 @NgModule({
   declarations: [
@@ -30,6 +33,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
     AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
+    SocketIoModule.forRoot(config),
     MatExpansionModule,
     MatButtonModule,
     MatFormFieldModule,

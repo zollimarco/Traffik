@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-//const configuration = require("config.json");
 import { api_maps } from 'config/api.json';
 import { SemaphoreMap } from '../models/semaphore-map';
 
