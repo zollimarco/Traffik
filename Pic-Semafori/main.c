@@ -60,7 +60,7 @@ char countadc=0;
 
 void UART_init(int); // inizializzo la comunicazione con la seriale
 void UART_TxChar(char); // invio una dato al terminale
-void uart_print(char,char);
+void uart_print(char,char,char);
 
 char *toString(int);
 char str[5];// variabile string convertita
@@ -78,8 +78,11 @@ char decine, unita;
 //contatori vecoli
 char countMoto = 0;     //pulsante RB0    ID 0110
 char countAuto = 0;     //pulsante RB1    ID 0100
-char countAutobus = 0;  //pulsante RB2    ID 0111
 char countCamion = 0;   //pulsante RB3    ID 0101
+char arrayMoto[4] = {0,0,0,0};
+char arrayAuto[4] = {0,0,0,0};
+char arraycamion[4] = {0,0,0,0};
+
 
 //Tempo attesa semafori
 char cambio_tempo = 0;
@@ -156,19 +159,23 @@ void main(void) {
     {
         if(primaconfigurazione)
         {
-        if(secondi >=60){
+        if(secondi >=5){
             minuti ++;
             secondi = 0;
-            uart_print(0x07,countMoto);
-            uart_print(0x05,countAuto);
-            uart_print(0x08,countAutobus);
-            uart_print(0x06,countCamion);
+            char i = 0;
             
-            countMoto = 0;
-            countAuto = 0;
-            countAutobus = 0;
-            countCamion = 0;
-
+            for(i = 0; i<4; i++){
+                uart_print(0x07,arrayMoto[i],i);
+                uart_print(0x05,arrayAuto[i],i);
+                uart_print(0x06,arraycamion[i],i);
+            }
+            
+            for(i = 0; i<4;i++){
+                arrayMoto[i] = 0;
+                arrayAuto[i] = 0;
+                arraycamion[i] = 0;
+            }
+           
         }
         
             //pressione = read_ADC(3) >> 2;
@@ -180,14 +187,14 @@ void main(void) {
             minuti = 0;
             temperatura = read_ADC(0) >> 2;
             ValoreScalato1 = scalatura_temperatura(temperatura);
-            uart_print(0x02,ValoreScalato1 * 3);
+            uart_print(0x02,ValoreScalato1 * 3 ,0);
             
             umidita = read_ADC(1) >> 2;
-            uart_print(0x03,umidita / 2.55);
+            uart_print(0x03,umidita / 2.55 ,0);
             
             pressione = read_ADC(3) >> 2;
             ValoreScalato2 = scalatura_pressione(pressione);
-            uart_print(0x04,ValoreScalato2);
+            uart_print(0x04,ValoreScalato2 ,0);
             TRISD = 0x00;
         }
           count_seg++;
@@ -207,13 +214,11 @@ void main(void) {
             int valore = read_ADC(3);
             
             if(valore < 250 && valore >= 0){
-                countMoto++;
+                arrayMoto[0] ++;
             }else if(valore >250 && valore < 500){
-                countAuto++;
-            }else if(valore >500 && valore < 750){
-                countAutobus++;
+                arrayAuto[0] ++;
             }else {
-                countCamion++;
+                arraycamion[0] ++;
             }
         }
         old_RB0 = PORTBbits.RB0; //1
@@ -223,13 +228,11 @@ void main(void) {
             int valore = read_ADC(4);
             
             if(valore < 250 && valore >= 0){
-                countMoto++;
+                arrayMoto[0] ++;
             }else if(valore >250 && valore < 500){
-                countAuto++;
-            }else if(valore >500 && valore < 750){
-                countAutobus++;
+                arrayAuto[0] ++;
             }else {
-                countCamion++;
+                arraycamion[0] ++;
             }
         }
         old_RB1 = PORTBbits.RB1;
@@ -238,13 +241,11 @@ void main(void) {
             int valore = read_ADC(5);
             
             if(valore < 250 && valore >= 0){
-                countMoto++;
+                arrayMoto[0] ++;
             }else if(valore >250 && valore < 500){
-                countAuto++;
-            }else if(valore >500 && valore < 750){
-                countAutobus++;
+                arrayAuto[0] ++;
             }else {
-                countCamion++;
+                arraycamion[0] ++;
             }
         }
         old_RB2 = PORTBbits.RB2;
@@ -253,13 +254,11 @@ void main(void) {
             int valore = read_ADC(6);
             
             if(valore < 250 && valore >= 0){
-                countMoto++;
+                arrayMoto[0] ++;
             }else if(valore >250 && valore < 500){
-                countAuto++;
-            }else if(valore >500 && valore < 750){
-                countAutobus++;
+                arrayAuto[0] ++;
             }else {
-                countCamion++;
+                arraycamion[0] ++;
             }
         }
         
@@ -294,7 +293,7 @@ void main(void) {
         if(!primaconfigurazione && secondiPrimaConfigurazione==30)
         {
             secondiPrimaConfigurazione=0;
-            uart_print(9,0);
+            uart_print(9,0,0);
             secondiPrimaConfigurazione=0;
         }
         
@@ -322,6 +321,7 @@ char scalatura_temperatura(char dato)
     
     return valore;
 }
+
 char scalatura_pressione(char dato)
 {
     char valoremin = 0;
@@ -352,8 +352,8 @@ void semafori(){
                     
                 if(old_stato != stato){
                 old_stato = stato;
-                //uart_print(0,0x02);  
-                //uart_print(1,0x00);
+                uart_print(0,0x02,0);  
+                uart_print(1,0x00,1);
                 }
 
             break;
@@ -363,8 +363,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-                //uart_print(0,0x02);  
-                //uart_print(1,0x01);
+                uart_print(0,0x02,0);  
+                uart_print(1,0x00,1);
                 }
             break;
             case 2:
@@ -374,8 +374,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-                //uart_print(0,0x02);  
-                //uart_print(1,0x02);
+                uart_print(0,0x02,0);  
+                uart_print(1,0x00,1);
                 }
             break;
             case 3:
@@ -383,8 +383,8 @@ void semafori(){
                 PORTC = 0x06;
                 if(old_stato != stato){
                 old_stato = stato;
-                //uart_print(0,0x00);  
-                //uart_print(1,0x02);
+                uart_print(0,0x02,0);  
+                uart_print(1,0x00,1);
                 }
             break;
             case 4:
@@ -393,8 +393,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-               // uart_print(0,0x01);  
-               // uart_print(1,0x02);
+               uart_print(0,0x02,0);  
+                uart_print(1,0x00,1);
                 }
             break;
                 case 6:
@@ -410,7 +410,6 @@ void semafori(){
                         stato = 0;
                     }
                     break;
-            
         }
 }
 
@@ -608,10 +607,11 @@ void init_ADC(){
     __delay_ms(10);
 }
 
-void uart_print(char sensore, char valore)
+void uart_print(char sensore, char valore, char strada)
 {
     char byte1 = 0xF0 | sensore ;
-    char byte2 = id_incrocio;
+    char byte2 = strada << 4 | (id_incrocio & 0x0F);
+    
     char byte3 = valore;
 
         UART_TxChar(byte1);
