@@ -1,4 +1,4 @@
-const redis = require("redis");
+const redis = require('redis');
 let redisNotReady = true;
 let client = redis.createClient({
     host: '127.0.0.1',
@@ -12,14 +12,29 @@ client.on("connect", (err) => {
         //se si connette riceve e invia i dati
 });
 
+client.on("ready", (err) => {
+       redisNotReady = false;
+
+ });
+
 const SerialPort = require('serialport')
 const ByteLength = require('@serialport/parser-byte-length')
-const port = new SerialPort('/dev/ttyS0')
+const port = new SerialPort('/dev/ttyS0', {baudRate: 115200})
 
 const parser = port.pipe(new ByteLength({length:3 }))
 parser.on('data', parseMsg) // will have 8 bytes per data event
 
 const gatewayDef = '1111';
+
+let byte1 = '00';
+let byte2 = '01';
+let byte3 = '0A';
+
+port.write(byte1,'hex');
+port.write(byte2,'hex');
+port.write(byte3,'hex');
+
+
 
 function parseMsg(data){
         //console.log(data[1]);
@@ -27,27 +42,20 @@ function parseMsg(data){
         let msgSize = data.lenght;
 
         let byte0 = parseInt(data[0],10).toString(2).padStart(8,'0');
-        //let byte1 = parseInt(data[1],10).toString(2).padStart(8,'0');
-        //let byte2 = parseInt(data[2],10).toString(2).padStart(8,'0');
-
-
-        //console.log("byte 1 ",byte0); //gateway + id sensore
-        //console.log("byte 2 ",byte1); //id incrocio
-        //console.log("byte 3 ",byte2); //valore
-        //console.log("---------------");
 
         let gateway = byte0.substring(0,4); //prende i primi 4 bit
         let sensore = byte0.substring(4);  //prende il resto dei bit
+	
         var id = data[1];
         var valore = data[2];
         let json = {};
 
-        if(gateway == '1111'){
+       //if(gateway == '1111'){
 
-       		if(sensore = "0010"){ 
+       		if(sensore === "0010"){ 
 		valore -= 20;
 		}
-		if(sensore = "0100"){
+		if(sensore === "0100"){
 		valore += 870;
 		}
 	json = {
@@ -55,24 +63,22 @@ function parseMsg(data){
         "Sensore": sensore,
         "Valore":valore
         };
-
-	client.on("ready", (err) => {
-	redisNotReady = false;
-        client.rpush("dati", json);
+	//console.log(json);
+	client.rpush("dati", JSON.stringify(json));
 
         client.llen("dati", function(err, data)
         {
-                console.log("Lunghezza della lista: "+data);
+                console.log("Lunghezza della lista: "+ data);
         });
 
         //elimina l'elemento in coda e restituisce l'elemento eliminato
-        client.lpop("dati", function(err, data)
-        {
-                console.log(data);
-        });
+        //client.lpop("dati", function(err, data)
+        //{
+        //        console.log(data);
+        //});
 
-});
+
 
         }
-        console.log(json);
-}
+       // console.log(json);
+//}

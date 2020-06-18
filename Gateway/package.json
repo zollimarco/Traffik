@@ -1,11 +1,19 @@
 {
-    "name": "name",
-    "description": "description",
-    "authors": "author",
-    "version": "1.0.0",
-    "main": "pathToMain",
-    "dependencies": {
-        "influx": "^5.5.1",
-        "@azure/event-hubs": "^5.0.0"
-    }
+  "name": "gateway",
+  "version": "1.0.0",
+  "description": "PIC Gateway",
+  "main": "index.js",
+  "dependencies": {
+    "@serialport/parser-byte-length": "^9.0.0",
+    "azure-iot-device": "^1.16.0",
+    "azure-iot-device-mqtt": "^1.14.1",
+    "redis": "^3.0.2",
+    "serialport": "^9.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicola Pozza, Basso Michelangelo",
+  "license": "ISC"
 }

@@ -20,6 +20,18 @@ clientRedis.on("ready", (err) => {
 });
 
 
+const SerialPort = require('serialport')
+const port = new SerialPort('/dev/ttyS0')
+
+let byte1 = '01100001'; //id incrocio
+let byte2 = ''; //stato semaforo
+let byte3 = ''; //tempo stato
+
+//invio valre byte in base 10
+port.write(byte1);
+//converto valore binario in base 10
+
+
 'use strict';
 
 var Protocol = require('azure-iot-device-mqtt').Mqtt;
@@ -33,7 +45,7 @@ var Message = require('azure-iot-device').Message; //la roba in più che arriva 
 
 // String containing Hostname, Device Id & Device Key in the following formats:
 //  "HostName=<iothub_host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"
-var deviceConnectionString = require('../config/gateway-config.json').deviceConnectionString;
+var deviceConnectionString = require('./gateway-config.json').deviceConnectionString;
 
 // fromConnectionString must specify a transport constructor, coming from any transport package.
 var client = Client.fromConnectionString(deviceConnectionString, Protocol);
@@ -50,27 +62,23 @@ var connectCallback = function (err) {
       		// When using MQTT the following line is a no-op.
       		client.complete(msg, printResultFor('completed'));
   	 });
-var contatore = 0 ;
-//	var sendInterval = setInterval(function () {
 
+	var sendInterval = setInterval(function () {
 		clientRedis.llen("dati", function(err, data)
         	{
 			console.log("Lunghezza coda ",data);
  			lunghezza_coda = data;
 	        });
 
-		function waitForPush () {
-			clientRedis.brpop(['dati',0], function (listName,item) {
-			if(item[1] != null){
-				console.log(item[1]);
-		 		var message = new Message(item[1]);
-                 		client.sendEvent(message/*, printResultFor('send')*/);
-			}
-  	  		process.nextTick(waitForPush);
- 		});
-	}
-	waitForPush();
+        	//elimina l'elemento in coda e restituisce l'elemento eliminato
+	        clientRedis.lpop("dati", function(err, data)
+	        {
+	                var message = new Message(data);
+	 	     	console.log(data);
+			client.sendEvent(message, printResultFor('send'));
 
+		});
+	}, 8000);
     // Create a message and send it to the IoT Hub every two seconds
     /*var sendInterval = setInterval(function () {
       var data = JSON.stringify({ deviceId: 'myFirstDevice', windSpeed: windSpeed, temperature: temperature, humidity: humidity });
