@@ -21,6 +21,13 @@ $traffik-dashboard-warn: mat-palette($mat-red);
 // Create the theme object (a Sass map containing all of the palettes).
 $traffik-dashboard-theme: mat-light-theme($traffik-dashboard-primary, $traffik-dashboard-accent, $traffik-dashboard-warn);
 
+// Define font-family
+$custom-typography: mat-typography-config(
+  $font-family: 'Raleway'
+);
+
+@include mat-core($custom-typography);
+
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
@@ -29,4 +36,4 @@ $traffik-dashboard-theme: mat-light-theme($traffik-dashboard-primary, $traffik-d
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+//body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

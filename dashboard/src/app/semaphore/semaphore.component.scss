@@ -3,5 +3,43 @@
     background-color: #f9f9f9;
     width: 90%;
 }
-.panel-data{
+
+.panel-data {
+    align-self: start;
+    position: absolute;
+    left: 20px;
+    font-size: medium;
+    line-height: 2em;
+}
+
+#left{
+    width: 80%;
+}
+
+#right{
+    float: right;
+    width: 20%;
+}
+
+button a {
+    font-size: large;
+}
+
+#edit {
+    padding-left: 10px;
+    background-color: #94CBE6;
+}
+
+#edit a {
+    color: #f9f9f9;
+
+}
+
+.mat-edit-icon{
+    font-size: medium;
+    color: #f9f9f9;
+}
+
+#details a {
+    color: #607D8B;
 }
