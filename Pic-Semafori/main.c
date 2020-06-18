@@ -49,6 +49,7 @@ const char numero[16] ={ CIFRA_0, CIFRA_1, CIFRA_2, CIFRA_3, CIFRA_4, CIFRA_5, C
 char count_seg = 0;
 
 const char id_incrocio = 0x00; 
+const char gateway = 0xff;
 
 #define _XTAL_FREQ 32000000
 
@@ -60,7 +61,7 @@ char countadc=0;
 
 void UART_init(int); // inizializzo la comunicazione con la seriale
 void UART_TxChar(char); // invio una dato al terminale
-void uart_print(char,char,char);
+void uart_print(char,int,char);
 
 char *toString(int);
 char str[5];// variabile string convertita
@@ -106,7 +107,7 @@ char scalatura_temperatura(char);
 char scalatura_pressione(char);
 
 //ricezione dati
-char byte1,byte2,byte3;
+char byte1,byte2,byte3,byte4,byte5;
 char datoarrivato = 0;
 
 char pedoni1=0,pedoni2=0;
@@ -150,7 +151,7 @@ void main(void) {
     stato = 0; //stato semaforo1
     
     old_stato = 99;
-    char temperatura;
+    int temperatura;
     char umidita;
     int pressione;
     TRISB = 0xFF;
@@ -159,7 +160,7 @@ void main(void) {
     {
         if(primaconfigurazione)
         {
-        if(secondi >=5){
+        if(secondi >=50){
             minuti ++;
             secondi = 0;
             char i = 0;
@@ -183,18 +184,17 @@ void main(void) {
             //UART_TxChar(ValoreScalato2);
             
             
-        if(minuti >= 15){
-            minuti = 0;
-            temperatura = read_ADC(0) >> 2;
-            ValoreScalato1 = scalatura_temperatura(temperatura);
-            uart_print(0x02,ValoreScalato1 * 3 ,0);
+        if(secondi >= 50){
+            secondi = 0;
+            temperatura = read_ADC(0);
+            
+            uart_print(0x02,temperatura ,0);
             
             umidita = read_ADC(1) >> 2;
             uart_print(0x03,umidita / 2.55 ,0);
             
-            pressione = read_ADC(3) >> 2;
-            ValoreScalato2 = scalatura_pressione(pressione);
-            uart_print(0x04,ValoreScalato2 ,0);
+            pressione = read_ADC(3);
+            uart_print(0x04,pressione ,0);
             TRISD = 0x00;
         }
           count_seg++;
@@ -299,8 +299,8 @@ void main(void) {
         
         if(datoarrivato == 1){
             
-            if(byte1 >> 4 == id_incrocio){   //controllo id incrocio    
-                fascia_oraria[(byte1 & 0x0F)][(byte2 & 0x1F)] = byte3;
+            if(byte1 == id_incrocio){   //controllo id incrocio    
+                fascia_oraria[(byte3 & 0x0F)][byte4>>3] = byte5;
                 
             }
             datoarrivato = 0;
@@ -352,7 +352,7 @@ void semafori(){
                     
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(0,0x02,0);  
+                uart_print(1,0x02,0);  
                 uart_print(1,0x00,1);
                 }
 
@@ -363,8 +363,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(0,0x02,0);  
-                uart_print(1,0x00,1);
+                uart_print(1,0x02,0);  
+                uart_print(1,0x01,1);
                 }
             break;
             case 2:
@@ -374,8 +374,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(0,0x02,0);  
-                uart_print(1,0x00,1);
+                uart_print(1,0x02,0);  
+                uart_print(1,0x02,1);
                 }
             break;
             case 3:
@@ -383,8 +383,8 @@ void semafori(){
                 PORTC = 0x06;
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(0,0x02,0);  
-                uart_print(1,0x00,1);
+                uart_print(1,0x00,0);  
+                uart_print(1,0x02,1);
                 }
             break;
             case 4:
@@ -393,8 +393,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-               uart_print(0,0x02,0);  
-                uart_print(1,0x00,1);
+               uart_print(1,0x01,0);  
+                uart_print(1,0x02,1);
                 }
             break;
                 case 6:
@@ -594,6 +594,12 @@ void __interrupt() ISR()
         while(!RCIF);
         RCIF = 0;
         byte3 = RCREG;
+        while(!RCIF);
+        RCIF = 0;
+        byte4 = RCREG;
+        while(!RCIF);
+        RCIF = 0;
+        byte5 = RCREG;
         datoarrivato = 1;
     }
     
@@ -607,16 +613,30 @@ void init_ADC(){
     __delay_ms(10);
 }
 
-void uart_print(char sensore, char valore, char strada)
+void uart_print(char sensore, int valore, char strada)
 {
-    char byte1 = 0xF0 | sensore ;
-    char byte2 = strada << 4 | (id_incrocio & 0x0F);
     
-    char byte3 = valore;
+    byte1 = gateway ; //destinatario
+    byte2 = id_incrocio ; //mittente  
+    if(sensore == 0x02 || sensore == 0x04)
+    {
+        byte3= sensore<<4;
+        byte4 =  (valore>>8&0x03);
+        byte5 = valore;
+    }
+    else
+    {
+        
+        byte3 = sensore<<4 | (strada&0x0F);
+        byte4 = (valore>>8&0x03);
+        byte5 = valore;
+    }
 
-        UART_TxChar(byte1);
-        UART_TxChar(byte2);
-        UART_TxChar(byte3);
+    UART_TxChar(byte1);
+    UART_TxChar(byte2);
+    UART_TxChar(byte3);
+    UART_TxChar(byte4);
+    UART_TxChar(byte5);
 }
 
 char *toString(int n){
