@@ -30,30 +30,32 @@ let byte1 = '00';
 let byte2 = '01';
 let byte3 = '0A';
 
-port.write(byte1,'hex');
-port.write(byte2,'hex');
-port.write(byte3,'hex');
+//port.write(byte1,'hex');
+//port.write(byte2,'hex');
+//port.write(byte3,'hex');
 
 
 
 function parseMsg(data){
-        //console.log(data[1]);
+       // console.log(data[1]);
 
         let msgSize = data.lenght;
 
         let byte0 = parseInt(data[0],10).toString(2).padStart(8,'0');
+ 	let byte1 = parseInt(data[0],10).toString(2).padStart(8,'0');
 
         let gateway = byte0.substring(0,4); //prende i primi 4 bit
         let sensore = byte0.substring(4);  //prende il resto dei bit
-	
-        var id = data[1];
+	let strada  = byte1.substring(0,4);
+	let id = byte1.substring(4);
+
         var valore = data[2];
         let json = {};
 
        //if(gateway == '1111'){
 
        		if(sensore === "0010"){ 
-		valore -= 20;
+		valore *= 3;
 		}
 		if(sensore === "0100"){
 		valore += 870;
@@ -61,6 +63,8 @@ function parseMsg(data){
 	json = {
         "id_incrocio":id,
         "Sensore": sensore,
+	"Strada": strada,
+	"Data" : Date(Date.now()),
         "Valore":valore
         };
 	//console.log(json);
@@ -72,10 +76,10 @@ function parseMsg(data){
         });
 
         //elimina l'elemento in coda e restituisce l'elemento eliminato
-        //client.lpop("dati", function(err, data)
-        //{
-        //        console.log(data);
-        //});
+        client.lpop("dati", function(err, data)
+        {
+                console.log(data);
+        });
 
 
 
