@@ -61,7 +61,7 @@ char countadc=0;
 
 void UART_init(int); // inizializzo la comunicazione con la seriale
 void UART_TxChar(char); // invio una dato al terminale
-void uart_print(char,int,char);
+void uart_print(char,int,char,char);
 
 char *toString(int);
 char str[5];// variabile string convertita
@@ -164,9 +164,9 @@ void main(void) {
             char i = 0;
             
             for(i = 0; i<4; i++){
-                uart_print(0x07,arrayMoto[i],i);
-                uart_print(0x05,arrayAuto[i],i);
-                uart_print(0x06,arraycamion[i],i);
+                uart_print(0x07,arrayMoto[i],i,indice_fascia);
+                uart_print(0x05,arrayAuto[i],i,indice_fascia);
+                uart_print(0x06,arraycamion[i],i,indice_fascia);
             }
             
             for(i = 0; i<4;i++){
@@ -186,13 +186,13 @@ void main(void) {
             secondi = 0;
             temperatura = read_ADC(0);
             
-            uart_print(0x02,temperatura ,0);
+            uart_print(0x02,temperatura ,0,indice_fascia);
             
             umidita = read_ADC(1) >> 2;
-            uart_print(0x03,umidita / 2.55 ,0);
+            uart_print(0x03,umidita / 2.55 ,0,indice_fascia);
             
             pressione = read_ADC(2);
-            uart_print(0x04,pressione ,0);
+            uart_print(0x04,pressione ,0,indice_fascia);
             TRISD = 0x00;
         }
           count_seg++;
@@ -291,7 +291,7 @@ void main(void) {
         if(!primaconfigurazione && secondiPrimaConfigurazione==30)
         {
             secondiPrimaConfigurazione=0;
-            uart_print(9,0,0);
+            uart_print(9,0,0,indice_fascia);
             secondiPrimaConfigurazione=0;
         }
         
@@ -324,8 +324,8 @@ void semafori(){
                     
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(1,0x02,0);  
-                uart_print(1,0x00,1);
+                uart_print(1,0x02,0,indice_fascia);  
+                uart_print(1,0x00,1,indice_fascia);
                 }
 
             break;
@@ -335,8 +335,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(1,0x02,0);  
-                uart_print(1,0x01,1);
+                uart_print(1,0x02,0,indice_fascia);  
+                uart_print(1,0x01,1,indice_fascia);
                 }
             break;
             case 2:
@@ -346,8 +346,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(1,0x02,0);  
-                uart_print(1,0x02,1);
+                uart_print(1,0x02,0,indice_fascia);  
+                uart_print(1,0x02,1,indice_fascia);
                 }
             break;
             case 3:
@@ -355,8 +355,8 @@ void semafori(){
                 PORTC = 0x06;
                 if(old_stato != stato){
                 old_stato = stato;
-                uart_print(1,0x00,0);  
-                uart_print(1,0x02,1);
+                uart_print(1,0x00,0,indice_fascia);  
+                uart_print(1,0x02,1,indice_fascia);
                 }
             break;
             case 4:
@@ -365,8 +365,8 @@ void semafori(){
                 
                 if(old_stato != stato){
                 old_stato = stato;
-               uart_print(1,0x01,0);  
-                uart_print(1,0x02,1);
+               uart_print(1,0x01,0,indice_fascia);  
+                uart_print(1,0x02,1,indice_fascia);
                 }
             break;
                 case 6:
@@ -589,7 +589,7 @@ void init_ADC(){
     __delay_ms(10);
 }
 
-void uart_print(char sensore, int valore, char strada)
+void uart_print(char sensore, int valore, char strada,char fascia)
 {
     
     byte1 = gateway ; //destinatario
@@ -597,14 +597,14 @@ void uart_print(char sensore, int valore, char strada)
     if(sensore == 0x02 || sensore == 0x04)
     {
         byte3= sensore<<4;
-        byte4 =  (valore>>8&0x03);
+        byte4 =  (valore>>8&0x03)|(fascia<<3&0xf8);
         byte5 = valore;
     }
     else
     {
         
         byte3 = sensore<<4 | (strada&0x0F);
-        byte4 = (valore>>8&0x03);
+        byte4 = (valore>>8&0x03)|(fascia<<3&0xf8);
         byte5 = valore;
     }
 
