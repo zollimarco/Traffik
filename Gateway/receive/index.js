@@ -21,7 +21,7 @@ const SerialPort = require('serialport')
 const ByteLength = require('@serialport/parser-byte-length')
 const port = new SerialPort('/dev/ttyS0', {baudRate: 115200})
 
-const parser = port.pipe(new ByteLength({length:3 }))
+const parser = port.pipe(new ByteLength({length:5 }))
 parser.on('data', parseMsg) // will have 8 bytes per data event
 
 const gatewayDef = '1111';
@@ -41,32 +41,53 @@ function parseMsg(data){
 
         let msgSize = data.lenght;
 
-        let byte0 = parseInt(data[0],10).toString(2).padStart(8,'0');
- 	let byte1 = parseInt(data[0],10).toString(2).padStart(8,'0');
+        let destinatario = data[0];
+	let mittente = data[1];
 
-        let gateway = byte0.substring(0,4); //prende i primi 4 bit
-        let sensore = byte0.substring(4);  //prende il resto dei bit
-	let strada  = byte1.substring(4);
-	let id = byte1.substring(0,4);
+        let byte3 = parseInt(data[0],10).toString(2).padStart(8,'0');
+ 	let byte4 = parseInt(data[0],10).toString(2).padStart(8,'0');
 
-        var valore = data[2];
-        let json = {};
+	let sensore = byte3.substring(0,4); //prende i primi 4 bit
+        let strada = byte3.substring(4);  //prende il resto dei bit
+	let fascia_oraria  = byte4.substring(0,5);
+	let valore1 = byte4.substring(5);
 
-       //if(gateway == '1111'){
+        var valore2 = data[4];
+        let semaforo_id = 0;
+	let json = {};
 
-       		if(sensore === "0010"){ 
+       //if(destinatario == '1111'){
+
+       		if(sensore === "0010"){
 		valore *= 3;
 		}
 		if(sensore === "0100"){
 		valore += 870;
 		}
+		if(sensore === "0001"){
+			if(strada === '0000'){
+				let semaforo1,semaforo3 = 0;
+				let samaforo2,semaforo4 = 1;
+				        json = {
+				        "id_incrocio":mittente,
+				        "Sensore": sensore,
+        				"Coppia": strada,
+        				"Data" : Date(Date.now()),
+        				"Valore":valore2
+        				};
+
+			}
+		}else{
+
+	console.log(valore1 + valore2);
 	json = {
-        "id_incrocio":id,
+        "id_incrocio":mittente,
         "Sensore": sensore,
 	"Strada": strada,
 	"Data" : Date(Date.now()),
-        "Valore":valore
+        "Valore":valore2
         };
+}
 	//console.log(json);
 	client.rpush("dati", JSON.stringify(json));
 
@@ -76,13 +97,11 @@ function parseMsg(data){
         });
 
         //elimina l'elemento in coda e restituisce l'elemento eliminato
-        client.lpop("dati", function(err, data)
+       /* client.lpop("dati", function(err, data)
         {
                 console.log(data);
         });
-
-
-
+	*/
         }
        // console.log(json);
 //}
