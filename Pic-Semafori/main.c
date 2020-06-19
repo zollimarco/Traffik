@@ -297,7 +297,7 @@ void main(void) {
         
         if(datoarrivato == 1){
             
-            if(byte1 == id_incrocio){   //controllo id incrocio    
+            if(byte1 == id_incrocio && (byte3 & 0x0F)>=0 && (byte4>>3)>=0 && (byte4>>3)<24){   //controllo id incrocio    
                 fascia_oraria[(byte3 & 0x0F)][byte4>>3] = byte5;
                 
             }
