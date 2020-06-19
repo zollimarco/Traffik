@@ -103,8 +103,6 @@ char minuti = 0;
 char secondi = 0;
 char old_RB0 ,old_RB1,old_RB2,old_RB3,old_RB4,old_RB5;
 char ValoreScalato1,ValoreScalato2;
-char scalatura_temperatura(char);
-char scalatura_pressione(char);
 
 //ricezione dati
 char byte1,byte2,byte3,byte4,byte5;
@@ -119,7 +117,7 @@ volatile char time[10];
 char fascia_oraria [2][23];
 char indice_fascia;
 char rosso_comune = 2;
-char giallo = 10;
+char giallo = 5;
 void *orario();
 
 
@@ -130,7 +128,7 @@ void main(void) {
     
     for(i = 0 ; i< 2 ;i++){
         for(c = 0; c < 23;c++){
-            fascia_oraria[i][c] = 5;
+            fascia_oraria[i][c] = 2;
         }
     }
     
@@ -309,32 +307,6 @@ void main(void) {
     return;
 }
 
-char scalatura_temperatura(char dato)
-{
-    char valoremin = 0;
-    char valoremax = 255;
-    char A = 0;
-    char B = 65;
-    char valore;
-    
-    valore = ((dato - valoremin) * (B - A))/((valoremax - valoremin) + A);
-    
-    return valore;
-}
-
-char scalatura_pressione(char dato)
-{
-    char valoremin = 0;
-    char valoremax = 255;
-    char A = 0;
-    char B = 215;
-    char valore;
-    
-    valore = ((dato - valoremin) * (B - A))/((valoremax - valoremin) + A);
-    
-    return valore;
-}
-
 void semafori(){
             switch(stato){
             case 0:
@@ -502,6 +474,10 @@ void timer(){
                 case 5:
                     valore2 = (tempi[5]) - tempo; //rosso s2
                     valore = (tempi[stato]+tempi[0] + tempi[1] + tempi[2]) - tempo; //verde e giallo s1
+                    break;
+                case 6:
+                    valore=0;
+                    valore2=0;
                     break;
             }
             
