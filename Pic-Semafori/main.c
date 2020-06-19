@@ -119,7 +119,7 @@ volatile char time[10];
 char fascia_oraria [2][23];
 char indice_fascia;
 char rosso_comune = 2;
-char giallo = 2;
+char giallo = 10;
 void *orario();
 
 
@@ -130,7 +130,7 @@ void main(void) {
     
     for(i = 0 ; i< 2 ;i++){
         for(c = 0; c < 23;c++){
-            fascia_oraria[i][c] = 2;
+            fascia_oraria[i][c] = 5;
         }
     }
     
@@ -489,7 +489,7 @@ void timer(){
                     break;
                 case 2:
                     valore = (tempi[2]) - tempo; //rosso s1
-                    valore2 = tempi[stato] - tempo;     //verde e giallo s2
+                    valore2 = (tempi[stato]+tempi[3] + tempi[4] + tempi[5]) - tempo;     //verde e giallo s2
                     break;
                 case 3:
                     valore2 = (tempi[3] + tempi[4] + tempi[5]) - tempo; //rosso s2
@@ -501,7 +501,7 @@ void timer(){
                     break;
                 case 5:
                     valore2 = (tempi[5]) - tempo; //rosso s2
-                    valore = tempi[stato] - tempo; //verde e giallo s1
+                    valore = (tempi[stato]+tempi[0] + tempi[1] + tempi[2]) - tempo; //verde e giallo s1
                     break;
             }
             
