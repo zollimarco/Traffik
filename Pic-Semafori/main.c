@@ -193,7 +193,7 @@ void main(void) {
             umidita = read_ADC(1) >> 2;
             uart_print(0x03,umidita / 2.55 ,0);
             
-            pressione = read_ADC(3);
+            pressione = read_ADC(2);
             uart_print(0x04,pressione ,0);
             TRISD = 0x00;
         }
