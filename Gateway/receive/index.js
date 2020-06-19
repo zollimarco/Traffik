@@ -1,27 +1,27 @@
 const redis = require('redis');
 let redisNotReady = true;
 let client = redis.createClient({
-    host: '127.0.0.1',
-    port: 6379
+	host: '127.0.0.1',
+	port: 6379
 });
 client.on("error", (err) => {
-   console.log("error", err)
+	console.log("error", err)
 });
 client.on("connect", (err) => {
-    console.log("connect");
-        //se si connette riceve e invia i dati
+	console.log("connect");
+	//se si connette riceve e invia i dati
 });
 
 client.on("ready", (err) => {
-       redisNotReady = false;
+	redisNotReady = false;
 
- });
+});
 
 const SerialPort = require('serialport')
 const ByteLength = require('@serialport/parser-byte-length')
-const port = new SerialPort('/dev/ttyS0', {baudRate: 115200})
+const port = new SerialPort('/dev/ttyS0', { baudRate: 115200 })
 
-const parser = port.pipe(new ByteLength({length:5 }))
+const parser = port.pipe(new ByteLength({ length: 5 }))
 parser.on('data', parseMsg) // will have 8 bytes per data event
 
 const gatewayDef = '1111';
@@ -36,72 +36,70 @@ let byte3 = '0A';
 
 
 
-function parseMsg(data){
-       // console.log(data[1]);
+function parseMsg(data) {
+	console.log(data);
 
-        let msgSize = data.lenght;
+	let msgSize = data.lenght;
 
-        let destinatario = data[0];
+	let destinatario = data[0];
 	let mittente = data[1];
 
-        let byte3 = parseInt(data[0],10).toString(2).padStart(8,'0');
- 	let byte4 = parseInt(data[0],10).toString(2).padStart(8,'0');
+	let byte3 = parseInt(data[2], 10).toString(2).padStart(8, '0');
+	let byte4 = parseInt(data[3], 10).toString(2).padStart(8, '0');
 
-	let sensore = byte3.substring(0,4); //prende i primi 4 bit
-        let strada = byte3.substring(4);  //prende il resto dei bit
-	let fascia_oraria  = byte4.substring(0,5);
+	let sensore = byte3.substring(4); //prende i primi 4 bit
+	let strada = byte3.substring(0, 4);  //prende il resto dei bit
+	let fascia_oraria = byte4.substring(0, 5);
 	let valore1 = byte4.substring(5);
 
-        var valore2 = data[4];
-        let semaforo_id = 0;
+	var valore2 = data[4];
+	let semaforo_id = 0;
 	let json = {};
 
-       //if(destinatario == '1111'){
+	//if(destinatario == '1111'){
+	let valore = valore1 + valore2;
 
-       		if(sensore === "0010"){
+	if (sensore === "0010") {
 		valore *= 3;
-		}
-		if(sensore === "0100"){
+	}
+	if (sensore === "0100") {
 		valore += 870;
+	}
+	if (sensore === "0001") {
+		if (strada === '0000' || strada === '0001') {
+			json = {
+				"id_incrocio": mittente,
+				"Sensore": sensore,
+				"Coppia": strada,
+				"Data": Date(Date.now()),
+				"Valore": valore2
+			};
 		}
-		if(sensore === "0001"){
-			if(strada === '0000'){
-				let semaforo1,semaforo3 = 0;
-				let samaforo2,semaforo4 = 1;
-				        json = {
-				        "id_incrocio":mittente,
-				        "Sensore": sensore,
-        				"Coppia": strada,
-        				"Data" : Date(Date.now()),
-        				"Valore":valore2
-        				};
+	}else {
+		json = {
+			"id_incrocio": mittente,
+			"Sensore": sensore,
+			"Strada": strada,
+			"Data": Date(Date.now()),
+			"Fascia_Oraria": fascia_oraria,
+			"Valore": valore
+		};
+	}
 
-			}
-		}else{
-
-	console.log(valore1 + valore2);
-	json = {
-        "id_incrocio":mittente,
-        "Sensore": sensore,
-	"Strada": strada,
-	"Data" : Date(Date.now()),
-        "Valore":valore2
-        };
-}
 	//console.log(json);
 	client.rpush("dati", JSON.stringify(json));
 
-        client.llen("dati", function(err, data)
-        {
-                console.log("Lunghezza della lista: "+ data);
-        });
+	client.llen("dati", function (err, data) {
+		console.log("Lunghezza della lista: " + data);
+	});
 
-        //elimina l'elemento in coda e restituisce l'elemento eliminato
-       /* client.lpop("dati", function(err, data)
-        {
-                console.log(data);
-        });
-	*/
-        }
+	//elimina l'elemento in coda e restituisce l'elemento eliminato
+	/* client.lpop("dati", function(err, data)
+	 {
+			 console.log(data);
+	 });
+ */
+}
        // console.log(json);
 //}
+
