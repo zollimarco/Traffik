@@ -34,9 +34,7 @@ let byte3 = '0A';
 //port.write(byte2,'hex');
 //port.write(byte3,'hex');
 
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
+
 
 function parseMsg(data) {
 	//console.log(data);
@@ -51,19 +49,16 @@ function parseMsg(data) {
 	let sensore = "0010" //byte3.substring(0,4); //prende i primi 4 bit
 	let strada =  "0000" //byte3.substring(4);  //prende il resto dei bit
 	let fascia_oraria =  "11111111" //byte4.substring(0, 5);
-	let valore1 = "11" //byte4.substring(5);
+	let valore1 = "000" //byte4.substring(5);
 	let byte5 = parseInt(data[4], 10).toString(2).padStart(8, '0');
 	console.log(byte5);
-
-	let valore2 = "‭11111111" //byte5;
+	
+	var valore2 = "00101000" //byte5; 
 	let semaforo_id = 0;
 	let json = {};
-	let valore = 0;
 	//if(destinatario === gatewayDef){
-	var pippo = valore1 + valore2;
-	console.log(pippo, "pippo");
-	valore = parseInt(pippo,2);
-	console.log(valore,"iniziale")
+	let valore = parseInt((valore1 + valore2),2);
+	console.log(valore,"1");
 
 	if (sensore === "0010") {
 		let valoremin = 0;
@@ -71,11 +66,18 @@ function parseMsg(data) {
 		let A = 0;
 		let B = 100;
 
-		valore = ((valore - valoremin) * (B - A))/((valoremax - valoremin) + A);
-		console.log(valore,"2");
-		valore = valore - 40; //per andare sotto zero
-		console.log(roundToTwo(valore));
+		var valore_finale = ((valore - valoremin) * (B - A))/((valoremax - valoremin) + A);
+		valore = valore_finale - 40; //per andare sotto zero
+		console.log(valore_finale,"2");
 
+		OldRange = (OldMax - OldMin)
+if (valore == 0)
+    Ne = NewMin
+else
+{
+    NewRange = (NewMax - NewMin)  
+    NewValue = (((OldValue - OldMin) * NewRange) / OldRange) + NewMin
+}
 	}
 
 	if (sensore === "0001") {
@@ -99,12 +101,12 @@ function parseMsg(data) {
 	}
 
 	//console.log(json);
-/*	client.rpush("dati", JSON.stringify(json));
+	client.rpush("dati", JSON.stringify(json));
 
 	client.llen("dati", function (err, data) {
 		console.log("Lunghezza della lista: " + data);
 	});
-*/
+
 	//elimina l'elemento in coda e restituisce l'elemento eliminato
 	 client.lpop("dati", function(err, data)
 	 {
