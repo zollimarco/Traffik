@@ -44,12 +44,13 @@ function parseMsg(data) {
 	let msgSize = data.lenght;
 
 	let destinatario = data[0];
+	console.log(data[1]);
 	let mittente = data[1];
 
 	let byte3 = parseInt(data[2], 10).toString(2).padStart(8, '0');
 	let byte4 = parseInt(data[3], 10).toString(2).padStart(8, '0');
 	let sensore = byte3.substring(0, 4); //prende i primi 4 bit
-	let strada = byte3.substring(4);  //prende il resto dei bit
+	let strada = parseInt(byte3.substring(4),2);  //prende il resto dei bit
 	let fascia_oraria = byte4.substring(0, 5);
 	let valore1 = byte4.substring(5);
 	let byte5 = parseInt(data[4], 10).toString(2).padStart(8, '0');
@@ -93,8 +94,6 @@ function parseMsg(data) {
 				sensore = "Camion";
 				break;
 		}
-
-
 
 		json = {
 			"id_incrocio": mittente,
