@@ -10,8 +10,6 @@ export class SemaphoreListComponent implements OnInit {
 
   
   @ViewChild(MatAccordion) accordion: MatAccordion;
-  @Input()
-  search: string;
 
   constructor() { }
 

@@ -1,1 +1,7 @@
-<p>search-bar works!</p>
+<mat-form-field class="searchbar">
+    <mat-label><mat-icon>search</mat-icon> ID o Via...</mat-label>
+    <input matInput type="text" [(ngModel)]="search">
+    <button mat-button *ngIf="search" matSuffix mat-icon-button aria-label="Clear" (click)="search=''">
+        <mat-icon>close</mat-icon>
+    </button>
+</mat-form-field>

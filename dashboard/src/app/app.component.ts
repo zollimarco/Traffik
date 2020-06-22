@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
-import { Subscription } from 'rxjs';
+import { SocketService } from './services/socket.service';
 
 @Component({
   selector: 'app-root',
@@ -9,16 +8,12 @@ import { Subscription } from 'rxjs';
 })
 export class AppComponent {
   clock:Date = new Date();
+  socket: SocketService;
 
-  private sub: Subscription;
+  constructor() { }
 
-  obj = this.socket.fromEvent<any>("yo");
-
-  constructor(private socket: Socket) { }
-
-  ngOnInit() {
-    this.sub = this.obj.subscribe(obj => console.log(obj));
-    
+  ngOnInit() { 
+    this.socket.subToStream();
     setInterval(() => {
        this.clock = new Date();
     }, 30000);
