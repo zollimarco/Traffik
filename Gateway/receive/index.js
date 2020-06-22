@@ -71,19 +71,8 @@ function parseMsg(data) {
 			valore = ((valore - valoremin) * (B - A)) / ((valoremax - valoremin) + A);
 
 			valore = valore - 40; //per andare sotto zero
-
 		}
 
-		if (sensore === "0001") {
-			json = {
-				"id_incrocio": mittente,
-				"Sensore": sensore,
-				"Coppia": strada,
-				"Data": Date(Date.now()),
-				"Valore": valore2
-			};
-
-		} else {
 			json = {
 				"id_incrocio": mittente,
 				"Sensore": sensore,
@@ -92,9 +81,9 @@ function parseMsg(data) {
 				"Fascia_Oraria": fascia_oraria,
 				"Valore": roundToTwo(valore)
 			};
-		}
 
 		console.log(json);
+
 		client.rpush("dati", JSON.stringify(json));
 
 		client.llen("dati", function (err, data) {
