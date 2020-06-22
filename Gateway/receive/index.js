@@ -40,11 +40,11 @@ function roundToTwo(num) {
 
 function parseMsg(data) {
 	//console.log(data);
+	var date = (new Date()).toISOString().split('T')[0];
 
 	let msgSize = data.lenght;
 
 	let destinatario = data[0];
-	console.log(data[1]);
 	let mittente = data[1];
 
 	let byte3 = parseInt(data[2], 10).toString(2).padStart(8, '0');
@@ -99,7 +99,7 @@ function parseMsg(data) {
 			"id_incrocio": mittente,
 			"Sensore": sensore,
 			"Strada": strada,
-			"Data": Date(Date.now()),
+			"Data": date,
 			"Fascia_Oraria": fascia_oraria,
 			"Valore": roundToTwo(valore)
 		};
