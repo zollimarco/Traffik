@@ -1,7 +1,10 @@
  export class SemaphoreMap {
+     //props
     coordinates:Coordinates;
     size: Size;
     zoom: number;
+    
+    //ctor
     constructor() {
         this.coordinates = new Coordinates();
         this.size = new Size()
