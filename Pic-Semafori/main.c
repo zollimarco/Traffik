@@ -48,7 +48,7 @@ const char numero[16] ={ CIFRA_0, CIFRA_1, CIFRA_2, CIFRA_3, CIFRA_4, CIFRA_5, C
 
 char count_seg = 0;
 
-const char id_incrocio = 0x00; 
+const char id_incrocio = 0x03; 
 const char gateway = 0xff;
 
 #define _XTAL_FREQ 32000000
@@ -69,7 +69,6 @@ char str[5];// variabile string convertita
 //tempi dei semafori
 unsigned char DIM = 6;
 int tempi[6] = {0,0,0,0,0,0};
-char primaconfigurazione = 1;
 
 char tempo = 0;
 int stato=0;
@@ -127,7 +126,7 @@ void main(void) {
     char i,c;
     
     for(i = 0 ; i< 2 ;i++){
-        for(c = 0; c < 23;c++){
+        for(c = 0; c <= 23;c++){
             fascia_oraria[i][c] = 2;
         }
     }
@@ -154,11 +153,12 @@ void main(void) {
     int pressione;
     TRISB = 0xFF;
     
+    uart_print(9,0,0,indice_fascia);
+    
     while(1)
     {
-        if(primaconfigurazione)
-        {
-        if(secondi >=50){
+
+        if(secondi >=60){
             minuti ++;
             secondi = 0;
             char i = 0;
@@ -182,8 +182,8 @@ void main(void) {
             //UART_TxChar(ValoreScalato2);
             
             
-        if(secondi >= 50){
-            secondi = 0;
+        if(minuti >= 1){
+            minuti = 0;
             temperatura = read_ADC(0);
             
             uart_print(0x02,temperatura ,0,indice_fascia);
@@ -279,21 +279,9 @@ void main(void) {
             
         }
         old_RB5 = PORTBbits.RB5;
-        }
-        else
-        {
-            primaconfigurazione=1;
-            for(char i =0;i<DIM;i++)
-                if(tempi[i]==0)
-                    primaconfigurazione=0;
-        }
         
-        if(!primaconfigurazione && secondiPrimaConfigurazione==30)
-        {
-            secondiPrimaConfigurazione=0;
-            uart_print(9,0,0,indice_fascia);
-            secondiPrimaConfigurazione=0;
-        }
+        
+        
         
         if(datoarrivato == 1){
             
@@ -533,11 +521,7 @@ void __interrupt() ISR()
         if (count > 500) //interrupt si attiva ogni 2ms quindi mettendo 500 entra ogni 1 secondo
         {
                 
-            count = 0;
-            if(!primaconfigurazione)
-                secondiPrimaConfigurazione++;
-            if(primaconfigurazione)
-            {
+            count = 0;        
                 cambio_tempo = 1;
                 secondi ++;
                 tempo ++; //incremento il tempo dei colori dei 2 semafori semaforo          
@@ -554,7 +538,7 @@ void __interrupt() ISR()
                     }
 
                 }
-            }
+            
         }
     }
     TMR0 = 131;
