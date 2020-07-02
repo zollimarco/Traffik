@@ -1,33 +1,35 @@
-export class Semaphore {
+export class CrossRoad {
     //props
     id: number;
-    data: Date;
-    umidita:number;
-    pressione: number;
-    strade: Road[];
+    date: Date;
+    humidity:number;
+    pressure: number;
+    temperature: number;
+    semaphores: Semaphore[];
     /**
      * ctor
      */
     constructor() {
         this.id = 0;
-        this.data = new Date();
-        this.umidita = 0;
-        this.pressione = 0;
-        this.strade = [];
+        this.date = new Date();
+        this.humidity = 0;
+        this.pressure = 0;
+        this.temperature = 0;
+        this.semaphores = [];
     }
 }
 
-export class Road {
+export class Semaphore {
     id: number;
-    stato: number;
-    auto: number;
+    state: number;
+    car: number;
     moto: number;
     camion: number;
     
     constructor() {
         this.id = 0;
-        this.stato = 0;
-        this.auto = 0;
+        this.state = 0;
+        this.car = 0;
         this.moto = 0;
         this.camion = 0;        
     }

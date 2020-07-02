@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { CrossRoad } from '../models/semaphore';
 
 @Component({
   selector: 'app-semaphore',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./semaphore.component.scss']
 })
 export class SemaphoreComponent implements OnInit {
+
+  @Input() crossroad: CrossRoad = new CrossRoad();
 
   constructor() { }
 
@@ -16,18 +19,23 @@ export class SemaphoreComponent implements OnInit {
   atm_pressure = null;
 
   ngOnInit(): void {
+    console.log(this.crossroad);
+    
     // ottengo i valori 
     // assegno i valori necessari
+    
   }
 
   edit() {
     // ToDo
     console.log("Modifica del semaforo");
+    
   };
   
   details() {
       // ToDo
       console.log("Dettagli");
+      console.log(this.crossroad);
   }
 }
 

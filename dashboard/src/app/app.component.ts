@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { SocketService } from './services/socket.service';
 import { Subscription, Observable } from 'rxjs';
 import { SensorData } from './models/sensor-data';
-import { Semaphore } from './models/semaphore';
+import { CrossRoad } from './models/semaphore';
 
 @Component({
   selector: 'app-root',
@@ -14,89 +14,119 @@ export class AppComponent {
   clock: Date = new Date();
   sub: Subscription;
   main_stream: Observable<SensorData>;
-  semaphore_list: Semaphore[] = [];
+  crossroad_list: CrossRoad[] = [];
 
   constructor(private socket: SocketService) { }
 
   ngOnInit() {
+
     this.main_stream = this.socket.subToStream();
     this.sub = this.main_stream.subscribe((data: SensorData) => {
       console.log(data);
-      
-      for (var semaphore of this.semaphore_list) {
-        if (data.id_incrocio === semaphore.id) {
+
+      for (var crossroad of this.crossroad_list) {
+        if (data.id_incrocio === crossroad.id) {
+          crossroad.date = data.Data;
+          //initialize bounds for pairs of semaphores
+          if (!crossroad.semaphores[data.Strada - 1].id) {
+            crossroad.semaphores[data.Strada - 1] = {
+              id: data.Strada - 1,
+              state: 0,
+              car: 0,
+              moto: 0,
+              camion: 0
+            }
+            crossroad.semaphores[data.Strada + 1] = {
+              id: data.Strada + 1,
+              state: 0,
+              car: 0,
+              moto: 0,
+              camion: 0
+            }
+          }
           switch (data.Sensore) {
             case "Stato_Semaforo":
-              semaphore.strade[data.Strada - 1].stato = data.Valore;
+              crossroad.semaphores[data.Strada - 1].state = data.Valore;
+              crossroad.semaphores[data.Strada + 1].state = data.Valore;
               break;
             case "Auto":
-              semaphore.strade[data.Strada - 1].auto = data.Valore;
+              crossroad.semaphores[data.Strada - 1].car = data.Valore;
               break;
             case "Camion":
-              semaphore.strade[data.Strada - 1].camion = data.Valore;
+              crossroad.semaphores[data.Strada - 1].camion = data.Valore;
               break;
             case "Moto":
-              semaphore.strade[data.Strada - 1].moto = data.Valore;
+              crossroad.semaphores[data.Strada - 1].moto = data.Valore;
               break;
             case "Umidità":
-              semaphore.umidita = data.Valore;
+              crossroad.humidity = data.Valore;
               break;
             case "Pressione":
-              semaphore.pressione = data.Valore;
+              crossroad.pressure = data.Valore;
+              break;
+            case "Temperatura":
+              crossroad.temperature = data.Valore;
               break;
             default:
               break;
           }
-          console.log(this.semaphore_list);
+          console.log(this.crossroad_list);
           return;
         }
       }
 
+      //new semaphpore
       var obj = {
         id: data.id_incrocio,
-        data: data.Data,
-        umidita: 0,
-        pressione: 0,
-        strade: [{
-          id: 1,
-          stato: 0,
-          auto: 0,
+        date: data.Data,
+        humidity: 0,
+        pressure: 0,
+        temperature: 0,
+        semaphores: []
+      }
+      obj.semaphores[data.Strada - 1] = {
+        id: data.Strada - 1,
+        state: 0,
+        car: 0,
+        moto: 0,
+        camion: 0
+      }
+      if (data.Sensore === "Stato_Semaforo") {
+        obj.semaphores[data.Strada + 1] = {
+          id: data.Strada + 1,
+          state: 0,
+          car: 0,
           moto: 0,
           camion: 0
-        },
-        {
-          id: 2,
-          stato: 0,
-          auto: 0,
-          moto: 0,
-          camion: 0
-        }]
+        }
       }
       switch (data.Sensore) {
         case "Stato_Semaforo":
-          obj.strade[data.Strada - 1].stato = data.Valore;
+          obj.semaphores[data.Strada - 1].state = data.Valore;
+          obj.semaphores[data.Strada + 1].state = data.Valore;
           break;
         case "Auto":
-          obj.strade[data.Strada - 1].auto = data.Valore;
+          obj.semaphores[data.Strada - 1].car = data.Valore;
           break;
         case "Camion":
-          obj.strade[data.Strada - 1].camion = data.Valore;
+          obj.semaphores[data.Strada - 1].camion = data.Valore;
           break;
         case "Moto":
-          obj.strade[data.Strada - 1].moto = data.Valore;
+          obj.semaphores[data.Strada - 1].moto = data.Valore;
           break;
         case "Umidità":
-          obj.umidita = data.Valore;
+          obj.humidity = data.Valore;
           break;
         case "Pressione":
-          obj.pressione = data.Valore;
+          obj.pressure = data.Valore;
+        case "Temperatura":
+          obj.temperature = data.Valore;
           break;
         default:
           break;
       }
-      this.semaphore_list.push(obj);
-      console.log(this.semaphore_list);
-      
+      this.crossroad_list.push(obj);
+      console.log(this.crossroad_list);
     });
     setInterval(() => {
       this.clock = new Date();

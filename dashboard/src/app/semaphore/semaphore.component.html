@@ -1,7 +1,7 @@
 <mat-expansion-panel class="semaphore-panel">
     <mat-expansion-panel-header>
         <mat-panel-title>
-            ID semaforo
+            {{crossroad.id}}
         </mat-panel-title>
         <mat-panel-description>
             Via vai
@@ -13,10 +13,14 @@
         </mat-grid-tile>
         <mat-grid-tile>
             <div class="panel-data">
-                <p><strong>Stato:</strong>
-                    <mat-icon color="warn">stop_circle</mat-icon>
-                    <mat-icon color="primary">stop_circle</mat-icon>
-                </p>
+                <!-- State Formatting-->
+                <div *ngFor="let semaphore of crossroad.semaphores">
+                    <p><strong>Stato:</strong>
+                        <mat-icon *ngIf="!semaphore.state" color="warn">stop_circle</mat-icon>
+                        <mat-icon *ngIf="semaphore.state"color="primary">stop_circle</mat-icon>
+                    </p>
+                </div>
+                
                 <p><strong>Veicoli (ultimo minuto):</strong> {{n_vehicle}}</p>
                 <p><strong>Umidità:</strong> {{humidity}}</p>
                 <p><strong>Temperatura:</strong> {{temperature}}</p>
