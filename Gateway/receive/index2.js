@@ -71,23 +71,16 @@ client_iothub.open(function (err) {
 		for (var key in coppia0){
 			var tempo = coppia0[key].toString(16);
 			var fascia_oraria = key.substring(5);
-			port.write(destinatario,'hex');
+	/*		port.write(destinatario,'hex');
 			port.write(mittente,'hex');
 			port.write('00','hex');
 			port.write('' + fascia_oraria.toString(16),'hex');
 			port.write(tempo,'hex');
-
+	*/
 }
 
 		for(var key in coppia1){
 			var tempo = coppia1[key].toString(16);
-			var fascia_oraria = key.substring(5);
-                        port.write(destinatario,'hex');
-                        port.write(mittente,'hex');
-                        port.write('10','hex');
-                        port.write('' + fascia_oraria.toString(16),'hex');
-                        port.write(tempo,'hex');
-
 		}
 
 
