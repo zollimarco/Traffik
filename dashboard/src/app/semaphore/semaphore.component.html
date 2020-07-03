@@ -4,7 +4,7 @@
             {{crossroad.id}}
         </mat-panel-title>
         <mat-panel-description>
-            Via vai
+            {{address}}
         </mat-panel-description>
     </mat-expansion-panel-header>
     <mat-grid-list cols="2" rowHeight="300px" style="padding-left: 0">
@@ -15,16 +15,23 @@
             <div class="panel-data">
                 <!-- State Formatting-->
                 <div *ngFor="let semaphore of crossroad.semaphores">
-                    <p><strong>Stato:</strong>
-                        <mat-icon *ngIf="!semaphore.state" color="warn">stop_circle</mat-icon>
-                        <mat-icon *ngIf="semaphore.state"color="primary">stop_circle</mat-icon>
+                    <p>
+                        <strong>Stato:</strong>
+                        <mat-icon *ngIf="!semaphore.state" color="primary">stop_circle</mat-icon>
+                        <mat-icon *ngIf="semaphore.state" [color]="semaphore.state === 2 ? 'warn' : 'danger'">
+                            stop_circle</mat-icon>
+                    </p>
+                    <p class="veichles">
+                        <strong>Veicoli (ultimo minuto):</strong>
+                        <br>
+                        <strong>Camion:</strong>{{semaphore.camion}}
+                        <strong>Auto:</strong>{{semaphore.car}}
+                        <strong>Moto:</strong>{{semaphore.moto}}
                     </p>
                 </div>
-                
-                <p><strong>Veicoli (ultimo minuto):</strong> {{n_vehicle}}</p>
-                <p><strong>Umidità:</strong> {{humidity}}</p>
-                <p><strong>Temperatura:</strong> {{temperature}}</p>
-                <p><strong>Pressione:</strong> {{atm_pressure}}</p>
+                <p><strong>Umidità:</strong> {{crossroad.humidity}}%</p>
+                <p><strong>Temperatura:</strong> {{crossroad.temperature}} C°</p>
+                <p><strong>Pressione:</strong> {{crossroad.pressure}} hPa</p>
             </div>
             <mat-grid-tile-footer style="background-color: transparent;">
                 <div id="right">

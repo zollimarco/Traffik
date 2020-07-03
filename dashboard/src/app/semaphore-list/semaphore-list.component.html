@@ -5,7 +5,7 @@
 </div>
 <mat-accordion class="headers-align" multi>
     <div *ngFor="let crossroad of crossroads">
-        <app-semaphore [crossroad]="crossroad"></app-semaphore>
+        <app-semaphore [crossroad]="crossroad" [address]="address"></app-semaphore>
     </div>
     <app-semaphore></app-semaphore>
 </mat-accordion>

@@ -20,11 +20,11 @@ export class CrossRoad {
 }
 
 export class Semaphore {
-    id: number;
-    state: number;
-    car: number;
-    moto: number;
-    camion: number;
+    id?: number;
+    state?: number;
+    car?: number;
+    moto?: number;
+    camion?: number;
     
     constructor() {
         this.id = 0;

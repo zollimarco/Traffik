@@ -13,39 +13,41 @@ export class AppComponent {
 
   clock: Date = new Date();
   sub: Subscription;
-  main_stream: Observable<SensorData>;
+  semaphore_stream: Observable<SensorData>;
   crossroad_list: CrossRoad[] = [];
 
   constructor(private socket: SocketService) { }
 
   ngOnInit() {
 
-    this.main_stream = this.socket.subToStream();
-    this.sub = this.main_stream.subscribe((data: SensorData) => {
+    this.semaphore_stream = this.socket.subToStream();
+    this.sub = this.semaphore_stream.subscribe((data: SensorData) => {
       console.log(data);
 
       for (var crossroad of this.crossroad_list) {
-        if (data.id_incrocio === crossroad.id) {
-          crossroad.date = data.Data;
-          //initialize bounds for pairs of semaphores
-          if (!crossroad.semaphores[data.Strada - 1].id) {
-            crossroad.semaphores[data.Strada - 1] = {
-              id: data.Strada - 1,
-              state: 0,
-              car: 0,
-              moto: 0,
-              camion: 0
-            }
-            crossroad.semaphores[data.Strada + 1] = {
-              id: data.Strada + 1,
-              state: 0,
-              car: 0,
-              moto: 0,
-              camion: 0
-            }
-          }
+        if (data.id_incrocio && data.id_incrocio === crossroad.id) {
           switch (data.Sensore) {
             case "Stato_Semaforo":
+              if (!crossroad.semaphores[data.Strada + 1]) {
+                console.log("stato semaforo");
+
+                crossroad.semaphores[data.Strada - 1] = {
+                  id: data.Strada - 1,
+                  state: 0,
+                  car: 0,
+                  moto: 0,
+                  camion: 0
+                }
+                crossroad.semaphores[data.Strada + 1] = {
+                  id: data.Strada + 1,
+                  state: 0,
+                  car: 0,
+                  moto: 0,
+                  camion: 0
+                }
+              }
+              console.log(crossroad);
+
               crossroad.semaphores[data.Strada - 1].state = data.Valore;
               crossroad.semaphores[data.Strada + 1].state = data.Valore;
               break;
@@ -70,12 +72,15 @@ export class AppComponent {
             default:
               break;
           }
+          crossroad.date = data.Data;
           console.log(this.crossroad_list);
           return;
         }
       }
 
       //new semaphpore
+
+      console.log("nuovo");
       var obj = {
         id: data.id_incrocio,
         date: data.Data,
@@ -91,17 +96,15 @@ export class AppComponent {
         moto: 0,
         camion: 0
       }
-      if (data.Sensore === "Stato_Semaforo") {
-        obj.semaphores[data.Strada + 1] = {
-          id: data.Strada + 1,
-          state: 0,
-          car: 0,
-          moto: 0,
-          camion: 0
-        }
-      }
       switch (data.Sensore) {
         case "Stato_Semaforo":
+          obj.semaphores[data.Strada + 1] = {
+            id: data.Strada + 1,
+            state: 0,
+            car: 0,
+            moto: 0,
+            camion: 0
+          }
           obj.semaphores[data.Strada - 1].state = data.Valore;
           obj.semaphores[data.Strada + 1].state = data.Valore;
           break;

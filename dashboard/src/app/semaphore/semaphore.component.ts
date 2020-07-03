@@ -9,33 +9,27 @@ import { CrossRoad } from '../models/semaphore';
 export class SemaphoreComponent implements OnInit {
 
   @Input() crossroad: CrossRoad = new CrossRoad();
+  @Input() address: string;
 
   constructor() { }
-
-  // colore semaforo, gestione dello stato
-  n_vehicle = null;
-  humidity = null;
-  temperature = null;
-  atm_pressure = null;
-
+  
   ngOnInit(): void {
-    console.log(this.crossroad);
-    
+
     // ottengo i valori 
     // assegno i valori necessari
-    
+
   }
 
   edit() {
     // ToDo
     console.log("Modifica del semaforo");
-    
+
   };
-  
+
   details() {
-      // ToDo
-      console.log("Dettagli");
-      console.log(this.crossroad);
+    // ToDo
+    console.log("Dettagli");
+    console.log(this.crossroad);
   }
 }
 
