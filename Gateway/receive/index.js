@@ -42,7 +42,6 @@ const gatewayDef = 255;
 client_iothub.on('error', function (err) {
     console.error(err.message);
 });
-var destinatario = "00";
 var mittente = "FF";
 
 // connect to the hub
@@ -67,29 +66,44 @@ client_iothub.open(function (err) {
             	console.log(JSON.stringify(delta));
 		var coppia0 = delta.Config.coppia0;
 		var coppia1 = delta.Config.coppia1;
+		var destinatario = delta.Config.IdIncrocio.toString(16);
+		console.log(destinatario)
+		var tempo = coppia0["verde1"].toString(16);
+                        var fascia_oraria = "verde1".substring(5);
+                        var fine = parseInt(fascia_oraria) << 3
+                        port.write (destinatario,'hex');
+                        port.write (mittente,'hex');
+                        port.write ('00','hex');
+                        port.write (fine.toString(16),'hex')
+                        port.write (tempo,'hex');
+/*
+
 
 		for (var key in coppia0){
 			var tempo = coppia0[key].toString(16);
 			var fascia_oraria = key.substring(5);
-			port.write(destinatario,'hex');
-			port.write(mittente,'hex');
-			port.write('00','hex');
-			port.write('' + fascia_oraria.toString(16),'hex');
-			port.write(tempo,'hex');
-
-}
+			var fine = parseInt(fascia_oraria) << 3
+			console.log(fine.toString(16));
+			port.write (destinatario,'hex');
+			port.write (mittente,'hex');
+			port.write ('00','hex');
+			port.write (fine.toString(16),'hex') 
+			port.write (tempo,'hex');
+		}
 
 		for(var key in coppia1){
 			var tempo = coppia1[key].toString(16);
 			var fascia_oraria = key.substring(5);
-                        port.write(destinatario,'hex');
+                        var fine = parseInt(fascia_oraria) << 3
+
+			port.write(destinatario,'hex');
                         port.write(mittente,'hex');
-                        port.write('10','hex');
-                        port.write('' + fascia_oraria.toString(16),'hex');
-                        port.write(tempo,'hex');
+                        port.write('01','hex');
+			 port.write (fine.toString(16),'hex')
+			port.write(tempo,'hex');
 
 		}
-
+*/
 
 		//port.write(byte1,'hex');
 		//port.write(byte2,'hex');
