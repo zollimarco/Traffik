@@ -44,7 +44,7 @@ export class AppComponent {
         camion: 0
       }
     }
-    
+
     this.crossroad = obj;
     //-------------------------------------------------------------------------------------------------
 
@@ -53,12 +53,11 @@ export class AppComponent {
     this.semaphore_stream_sub = this.semaphore_stream.subscribe((data: SensorData) => {
       console.log("inzio callback" + data);
 
+      if (this.crossroad.id === data.id_incrocio) {
         switch (data.Sensore) {
           case "Stato_Semaforo":
             if (!this.crossroad.semaphores[data.Strada + 1]) {
               console.log("stato semaforo");
-      if (this.crossroad.id === data.id_incrocio) {
-
               this.crossroad.semaphores[data.Strada - 1] = {
                 id: data.Strada - 1,
                 state: 0,

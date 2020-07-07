@@ -8,15 +8,17 @@ import { SemaphoreMap } from '../models/semaphore-map';
   styleUrls: ['./semaphore-map.component.scss']
 })
 export class SemaphoreMapComponent implements OnInit {
+
   image_url: string;
   semaphore_map: SemaphoreMap = new SemaphoreMap();
+
   
   constructor() {}
 
   ngOnInit(): void { 
     this.semaphore_map.coordinates.latitude = 45.95160;
     this.semaphore_map.coordinates.longitude = 12.68054;
-    this.semaphore_map.size.height = 300;
+    this.semaphore_map.size.height = 400;
     this.semaphore_map.size.width = 1000;
     this.semaphore_map.zoom = 18;
 

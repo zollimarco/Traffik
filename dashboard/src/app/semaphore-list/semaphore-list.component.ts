@@ -34,8 +34,11 @@ export class SemaphoreListComponent implements OnInit {
     this.coordinates_stream = this.socket.subToCoordinates();
     this.coordinates_stream_sub =  this.coordinates_stream.subscribe((data: any) => console.log(data));
     this.socket.getCoordinates();
+
+    
     let latitude = 45.95160;
     let longitude = 12.68054;
+    //aggiungere un controllo per vedere che la variabile sia carica
     
     let map_url = api_maps.reverse_url + api_maps.key + "&location=" + latitude + "%2C" + longitude + api_maps.end_reverse_url;
 

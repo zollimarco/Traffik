@@ -7,14 +7,14 @@
             {{address}}
         </mat-panel-description>
     </mat-expansion-panel-header>
-    <mat-grid-list cols="2" rowHeight="300px" style="padding-left: 0">
+    <mat-grid-list cols="2" rowHeight="400px" style="padding-left: 0">
         <mat-grid-tile>
             <app-semaphore-map></app-semaphore-map>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <div class="data-section">
                 <div class="ambient-data">
-                    <span color="primary">Ultimo aggiornamento:</span> {{crossroad.date | date: 'd/M/yy, HH:mm'}} <br>
+                    <span>Ultimo aggiornamento:</span> {{crossroad.date | date: 'd/M/yy, HH:mm'}} <br>
                     <strong>Umidità:</strong> {{crossroad.humidity}}%
                     <strong>Temperatura:</strong> {{crossroad.temperature}} C°
                     <strong>Pressione:</strong> {{crossroad.pressure}} hPa
@@ -27,19 +27,18 @@
                         <mat-icon *ngIf="semaphore.state" [color]="semaphore.state === 2 ? 'warn' : 'accent'">
                             stop_circle</mat-icon>
                     </p>
-                    <p class="veichles">
-                        <strong>Veicoli (ultimo minuto):</strong>
-                        <br>
-                        Camion <strong>{{semaphore.camion}}</strong> <br>
-                        Auto <strong>{{semaphore.car}}</strong> <br>
+                    <div class="veichles">
+                        <strong>Veicoli</strong> <br>
+                        Camion <strong>{{semaphore.camion}}</strong> 
+                        Auto <strong>{{semaphore.car}}</strong> 
                         Moto <strong>{{semaphore.moto}}</strong>
-                    </p>
+                    </div>
                 </div>
             </div>
 
 
             <mat-grid-tile-footer style="background-color: transparent;">
-                <div id="left">
+                <div id="right">
                     <button id="details" class="mat-button btn" (click)="details()"><a>Dettagli ></a></button>
                 </div>
             </mat-grid-tile-footer>
