@@ -14,7 +14,7 @@ export class SocketService {
     return this.socket.fromEvent<SensorData>("Traffik");  
   }
   subToCoordinates(){
-    return this.socket.fromEvent<SensorData>("Coordinate");  
+    return this.socket.fromEvent<any>("Coordinate");  
   }
   getCoordinates() {
     this.socket.emit('GetIncroci');
