@@ -20,12 +20,6 @@ export class SemaphoreComponent implements OnInit {
 
   }
 
-  edit() {
-    // ToDo
-    console.log("Modifica del semaforo");
-
-  };
-
   details() {
     // ToDo
     console.log("Dettagli");
