@@ -4,12 +4,5 @@
     "authors": "author",
     "version": "1.0.0",
     "main": "pathToMain",
-    "dependencies": {
-        "@azure/event-hubs": "^5.0.0",
-        "express": "^4.17.1",
-        "influx": "^5.5.1",
-        "socket.io": "^2.3.0",
-        "tedious": "^1.14.0",
-        "tedious-connection-pool": "^1.0.5"
-    }
+    "dependencies": {}
 }
