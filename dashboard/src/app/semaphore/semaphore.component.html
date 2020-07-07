@@ -21,6 +21,7 @@
                 </div>
                 <!-- State Formatting-->
                 <div class="semaphores-data" *ngFor="let semaphore of crossroad.semaphores">
+                    <hr>
                     <p>
                         <strong>{{semaphore.id}} - </strong>
                         <mat-icon *ngIf="!semaphore.state" color="primary">stop_circle</mat-icon>
@@ -28,20 +29,34 @@
                             stop_circle</mat-icon>
                     </p>
                     <div class="veichles">
-                        <strong>Veicoli</strong> <br>
-                        Camion <strong>{{semaphore.camion}}</strong> 
-                        Auto <strong>{{semaphore.car}}</strong> 
-                        Moto <strong>{{semaphore.moto}}</strong>
+                        <strong>Veicoli: </strong> <br>
+                        <table mat-table>
+                            <th mat-header-cell>
+                                <mat-icon color="secondary"> local_shipping</mat-icon>
+                            </th>
+                            <td mat-cell><strong>{{semaphore.camion}}</strong></td>
+
+                            <th>
+                                <mat-icon color="secondary"> directions_car</mat-icon>
+                            </th>
+                            <td><strong>{{semaphore.car}}</strong></td>
+                            <th>
+                                <mat-icon color="secondary"> motorcycle</mat-icon>
+                            </th>
+                            <td><strong>{{semaphore.moto}}</strong></td>
+                        </table>
                     </div>
+
                 </div>
             </div>
 
-
+            <!--
             <mat-grid-tile-footer style="background-color: transparent;">
                 <div id="right">
                     <button id="details" class="mat-button btn" (click)="details()"><a>Dettagli ></a></button>
                 </div>
             </mat-grid-tile-footer>
+            -->
         </mat-grid-tile>
     </mat-grid-list>
 </mat-expansion-panel>
