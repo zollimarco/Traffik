@@ -31,33 +31,46 @@ export class SemaphoreListComponent implements OnInit {
   constructor(private http: HttpClient, private socket: SocketService) { }
 
   ngOnInit(): void {
+    let arrayIsNotEmpty: boolean = false;
 
     //------------------------------sottoiscrizione al flusso delle coordinate-------------------------
     this.coordinates_stream = this.socket.subToCoordinates();
     this.coordinates_stream_sub = this.coordinates_stream.subscribe((data: any) => {
-      this.coordinates_list = data;
-      this.coordinates.latitude = this.coordinates_list[0].Latitudine;
-      this.coordinates.longitude = this.coordinates_list[0].Longitudine;
-      console.log(data);
+      // Visualizzo la lista delle coordinate degli incroci
+      console.log(data.Incroci);
+
+      // Ottengo il contenuto di data
+      this.coordinates_list = data.Incroci;
+
+      if (this.coordinates_list.length != 0) {
+        arrayIsNotEmpty = true;
+      }
+      console.log("check: " + arrayIsNotEmpty);
     });
+
     this.socket.getCoordinates();
 
-    let latitude = 45.95160;
-    let longitude = 12.68054;
     //aggiungere un controllo per vedere che la variabile sia carica
+    if (arrayIsNotEmpty) {
+      this.coordinates.latitude = this.coordinates_list[0].Latitudine;
+      this.coordinates.longitude = this.coordinates_list[0].Longitudine;
 
-    let map_url = api_maps.reverse_url + api_maps.key + "&location=" + latitude + "%2C" + longitude + api_maps.end_reverse_url;
+      let map_url = api_maps.reverse_url + api_maps.key + "&location=" + this.coordinates.latitude + "%2C" + this.coordinates.longitude + api_maps.end_reverse_url;
 
+      // Http request
+      let obj = new Object;
+      this.http.get<MapsInfo>(map_url).subscribe(data => {
+        let street = data.results[0].locations[0].street;
+        let city = data.results[0].locations[0].adminArea5;
 
-    // Http request
-    let obj = new Object;
-    this.http.get<MapsInfo>(map_url).subscribe(data => {
-      let street = data.results[0].locations[0].street;
-      let city = data.results[0].locations[0].adminArea5;
+        // Formatto l'indirizzo
+        this.address = street + " (" + city + ")";
+      });
 
-      // Formatto l'indirizzo
-      this.address = street + " (" + city + ")";
-    });
+      console.log("lat: " + this.coordinates.latitude);
+      console.log("lon: " + this.coordinates.longitude);
+      console.log(this.address);
+    }
   }
 }
 
