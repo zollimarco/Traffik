@@ -1,84 +1,32 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT Licence.
-
-/*
-  This sample demonstrates how to use the Microsoft Azure Event Hubs Client for JavaScript to 
-  read messages sent from a device. Please see the documentation for @azure/event-hubs package
-  for more details at https://www.npmjs.com/package/@azure/event-hubs
-  For an example that uses checkpointing, follow up this sample with the sample in the 
-  eventhubs-checkpointstore-blob package on GitHub at the following link:
-  https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/eventhub/eventhubs-checkpointstore-blob/samples/javascript/receiveEventsUsingCheckpointStore.js
-*/
-
 const { EventHubConsumerClient } = require("@azure/event-hubs");
-
-// If using websockets, uncomment the following require statement
-// const WebSocket = require("ws");
-
-// If you need proxy support, uncomment the below code to create proxy agent
-// const HttpsProxyAgent = require("https-proxy-agent");
-// const proxyAgent = new HttpsProxyAgent(proxyInfo);
-
-// Event Hub-compatible endpoint
-// az iot hub show --query properties.eventHubEndpoints.events.endpoint --name {your IoT Hub name}
-//const eventHubsCompatibleEndpoint = "sb://ihsuprodamres044dednamespace.servicebus.windows.net";
-
-// Event Hub-compatible name
-// az iot hub show --query properties.eventHubEndpoints.events.path --name {your IoT Hub name}
-//const eventHubsCompatiblePath = "iothub-ehub-hubforapi-3522311-cda7ebab0f";
-
-// Primary key for the "service" policy to read messages
-// az iot hub policy show --name service --query primaryKey --hub-name {your IoT Hub name}
-//const iotHubSasKey = "RuG5CRBhsBmuXjgohrvpDdPnP0L1GYYBIVQW/IPnXrE=";
-
-// If you have access to the Event Hub-compatible connection string from the Azure portal, then
-// you can skip the Azure CLI commands above, and assign the connection string directly here.
-//const connectionString = `Endpoint=${eventHubsCompatibleEndpoint}/;EntityPath=${eventHubsCompatiblePath};SharedAccessKeyName=service;SharedAccessKey=${iotHubSasKey}`;
-
 const Influx = require('influx');
-
 const influx = new Influx.InfluxDB({
   host: "40.119.129.35",
   database: "Traffik",
   port: 8086
 });
-
-
 const connectionString = "Endpoint=sb://ihsuprodamres044dednamespace.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=bNfWqzIU43AT2kk0IumPG9mXhVVPfDdAiPzrzFpgHL4=;EntityPath=iothub-ehub-hubforapi-3522311-cda7ebab0f";
+var ConnectionPool = require('tedious-connection-pool');
+var Request = require('tedious').Request
+var iothub = require('azure-iothub');
+var connectionString1 = 'HostName=HubForApi.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=bNfWqzIU43AT2kk0IumPG9mXhVVPfDdAiPzrzFpgHL4=';
+var registry = iothub.Registry.fromConnectionString(connectionString1);
+
 
 var printError = function (err) {
   console.log(err.message);
 };
 
-var ConnectionPool = require('tedious-connection-pool');
-var Request = require('tedious').Request
-
-
-var poolConfig = {
-  min: 2,
-  max: 10,
-  log: true
-};
-
-
 var connectionConfig = {
-  server: 'itszolli.database.windows.net',  //update me   
-  userName: 'ZolliMarco', //update me
-  password: 'Vmware1!',  //update me      
+  server: 'itszolli.database.windows.net',
+  userName: 'ZolliMarco',
+  password: 'Vmware1!',
   options: {
     // If you are on Microsoft Azure, you need encryption:
     encrypt: true,
-    database: 'ProvaTraffik'  //update me
+    database: 'ProvaTraffik'
   }
 };
-
-var pool = new ConnectionPool(poolConfig, connectionConfig);
-
-pool.on('error', function (err) {
-  console.error(err);
-});
-
-
 var TYPES = require('tedious').TYPES;
 
 const
@@ -95,8 +43,22 @@ const server = http.createServer(app);
 // bind socket.io to that server
 const io = socketio(server);
 
-let nextVisitorNumber = 1;
+
+var poolConfig = {
+  min: 2,
+  max: 10,
+  log: true
+};
+
+
+var pool = new ConnectionPool(poolConfig, connectionConfig);
+
+pool.on('error', function (err) {
+  console.error(err);
+});
+
 let onlineClients = new Set();
+
 
 function onNewWebsocketConnection(socket) {
   console.info(`Socket ${socket.id} has connected.`);
@@ -106,12 +68,13 @@ function onNewWebsocketConnection(socket) {
     onlineClients.delete(socket.id);
     console.info(`Socket ${socket.id} has disconnected.`);
   });
-
-  // echoes on the terminal every "hello" message this socket sends
-  socket.on("hello", helloMsg => console.info(`Socket ${socket.id} says: "${helloMsg}"`));
-
-  // will send a message only to this socket (different than using `io.emit()`, which would broadcast it)
-  socket.emit("welcome", `Welcome! You are visitor number ${nextVisitorNumber++}`);
+  socket.on("GetIncroci", GetCoordinate => {
+    vett = {
+      "Incroci": []
+    }
+    inviaCoordinate();
+    
+  });
 }
 
 
@@ -126,8 +89,6 @@ var printMessages = function (messages) {
     console.log(JSON.stringify(message.body.Sensore));
     console.log(JSON.stringify(message.body));
 
-    io.emit("Traffik", message.body);  
-
     let id_incrocio = message.body.id_incrocio;
     let Sensore = message.body.Sensore;
     let Strada = message.body.Strada;
@@ -135,11 +96,14 @@ var printMessages = function (messages) {
     let Fascia_Oraria = message.body.Fascia_Oraria;
     let Valore = message.body.Valore;
 
+    io.emit("Traffik", message.body);
+
+
+
     let sem = -1;
 
     switch (Sensore) {
       case "Stato_Semaforo": {
-        //console.log("dentro stato sem");
         if (message.body.Valore === 0) {
           Valore = "V";
         }
@@ -150,7 +114,6 @@ var printMessages = function (messages) {
           Valore = "R";
         }
         if (Strada === 0) {
-          //console.log("dentro strada");
           writeDataStato(id_incrocio, 0, 1, Valore);
           writeDataStato(id_incrocio, 0, 3, Valore);
         }
@@ -163,7 +126,6 @@ var printMessages = function (messages) {
       case "Temperatura":
       case "Umidità":
       case "Pressione": {
-        //console.log("dentro meteo");
         WriteMeteo(id_incrocio, Sensore, Valore);
 
       } break;
@@ -180,39 +142,31 @@ var printMessages = function (messages) {
         }
 
         WriteContatore(id_incrocio, Sensore, Valore, Fascia_Oraria, Strada, sem)
-        scriviTraffico(id_incrocio, sem, Strada, Fascia_Oraria, Data_in, Sensore, Valore);
+        //COMMENTOOOOOOOOOOOOOOOOOOOOOOOO
+        //scriviTraffico(id_incrocio, sem, Strada, Fascia_Oraria, Data_in, Sensore, Valore);
       } break;
       default: {
 
       }
     }
-
-    //writeData(message.body);   
-
-
-    /*console.log("Properties (set by device): ");
-    console.log(JSON.stringify(message.properties));
-    console.log("System properties (set by IoT Hub): ");
-    console.log(JSON.stringify(message.systemProperties));*/
     console.log("");
   }
 };
 
+
+
 async function main() {
   console.log("IoT Hub Quickstarts - Read device to cloud messages.");
 
-  // If using websockets, uncomment the webSocketOptions below
-  // If using proxy, then set `webSocketConstructorOptions` to { agent: proxyAgent }
-  // You can also use the `retryOptions` in the client options to configure the retry policy
   const clientOptions = {
     // webSocketOptions: {
     //   webSocket: WebSocket,
     //   webSocketConstructorOptions: {}
     // }
-  };
+  }
 
   // Create the client to connect to the default consumer group of the Event Hub
-  const consumerClient = new EventHubConsumerClient("$Default", connectionString, clientOptions);
+  const consumerClient = new EventHubConsumerClient("$Default", connectionString);
 
   // Subscribe to messages from all partitions as below
   // To subscribe to messages from a single partition, use the overload of the same method.
@@ -227,32 +181,8 @@ main().catch((error) => {
 });
 
 
-/*let writeData = (dati) => {
-    
-    var id = dati.deviceId;
-    var temp = dati.temperature;
-    
-  influx
-    .writePoints(
-      [
-        {
-          measurement: "device01",
-          tags: { deviceId: id },
-          fields: { temperature: temp.toString() }
-        }
-      ],
-      {
-        database: "provaHub",
-        precision: "s"
-      }
-    )
-    .catch(err => {
-      console.error("Error writing data to Influx.");
-    });
-};*/
-
 let writeDataStato = (id_inc, id_sem, id_strad, stat) => {
-  //console.log("dentro write data");
+
 
 
   influx
@@ -275,9 +205,7 @@ let writeDataStato = (id_inc, id_sem, id_strad, stat) => {
 };
 
 let WriteMeteo = (id_inc, Sensore, valore) => {
-  /*console.log("dentro write data meteo " + Sensore + " " + valore);
-  console.log("Sensore: " + Sensore );
-  console.log("Valore: " + valore);*/
+
 
   influx
     .writePoints(
@@ -300,14 +228,6 @@ let WriteMeteo = (id_inc, Sensore, valore) => {
 
 
 let WriteContatore = (id_inc, Sensore, valore, Fascia_Oraria, id_strad, sem) => {
-  //console.log("dentro write data meteo " + Sensore + " " + valore);
-  /*console.log("id_nc: " + id_inc );
-  console.log("Sensore: " + Sensore);
-  console.log("valore: " + valore );
-  console.log("Fascia_Oraria: " + Fascia_Oraria);
-  console.log("id_strad: " + id_strad );
-  console.log("sem: " + sem);*/
-
 
   influx
     .writePoints(
@@ -330,33 +250,7 @@ let WriteContatore = (id_inc, Sensore, valore, Fascia_Oraria, id_strad, sem) => 
 
 function scriviTraffico(id_inc, id_sem, id_strad, fascia, data, tipo, conteggio) {
 
-  /*
 
-  request = new Request("INSERT INTO [dbo].[Traffico] ([Id_incrocio],[Id_semaforo]  ,[Id_strada]  ,[Fascia_oraria]  ,[Data]  ,[Tipologia_veicolo]  ,[Conteggio]) VALUES  (@id_inc,@id_sem,@id_strad,@fascia,@data,@tipo,@conteggio);", function (err) {
-    if (err) {
-      console.log(err);
-    }
-  });
-
-  request.addParameter('id_inc', TYPES.Int, id_inc);
-  request.addParameter('id_sem', TYPES.TinyInt, id_sem);
-  request.addParameter('id_strad', TYPES.TinyInt, id_strad);
-  request.addParameter('fascia', TYPES.TinyInt, fascia);
-  request.addParameter('data', TYPES.Date, data);
-  request.addParameter('tipo', TYPES.VarChar, tipo);
-  request.addParameter('conteggio', TYPES.Int, conteggio);
-  request.on('row', function (columns) {
-    columns.forEach(function (column) {
-      if (column.value === null) {
-        console.log('NULL');
-      } else {
-        console.log("Product id of inserted item is " + column.value);
-      }
-    });
-  });
-
-
-  connection.execSql(request);*/
 
   pool.acquire(function (err, connection) {
     if (err) {
@@ -392,6 +286,49 @@ function scriviTraffico(id_inc, id_sem, id_strad, fascia, data, tipo, conteggio)
 
 }
 
+let vett = {
+  "Incroci": []
+}
+
+
+function inviaCoordinate() {
+
+  var query = registry.createQuery('SELECT * FROM devices', 100);
+  var onResults = function (err, results) {
+    if (err) {
+      console.error('Failed to fetch the results: ' + err.message);
+    } else {
+      // Do something with the results
+      results.forEach(function (twin) {
+        if(twin.properties.desired.Config){    
+       
+          let id_inc = twin.properties.desired.Config.IdIncrocio;        
+          let latitudine = twin.properties.desired.Config.Coordinate.latitudine;
+          let longitudine =  twin.properties.desired.Config.Coordinate.longitudine;
+       
+          let json_obj = {
+            "id_incrocio" : id_inc,
+            "Latitudine" : latitudine,
+            "Longitudine" : longitudine
+          }
+   
+          vett.Incroci.push(json_obj);
+          io.emit("Coordinate", vett);
+          console.log(vett);
+      }});
+
+      if (query.hasMoreResults) {
+        query.nextAsTwin(onResults);
+      }
+    }
+  };
+
+  query.nextAsTwin(onResults);
+
+}
+
+
+
 function startServer() {
 
 
@@ -409,11 +346,6 @@ function startServer() {
 
   // will send one message per second to all its clients
   let secondsSinceServerStarted = 0;
-  /*setInterval(() => {
-      secondsSinceServerStarted++;
-      io.emit("seconds", secondsSinceServerStarted);
-      io.emit("online", onlineClients.size);
-  }, 1000);*/
 }
 
 startServer();
