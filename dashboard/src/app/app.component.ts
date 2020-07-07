@@ -24,6 +24,9 @@ export class AppComponent {
     this.sub = this.semaphore_stream.subscribe((data: SensorData) => {
       console.log(data);
 
+      // Magari non capisco io cosa hai scritto ma crossroad_list dovrebbe essere vuoto:
+      // non gli viene mai assegnato nulla 
+
       for (var crossroad of this.crossroad_list) {
         if (data.id_incrocio && data.id_incrocio === crossroad.id) {
           switch (data.Sensore) {
