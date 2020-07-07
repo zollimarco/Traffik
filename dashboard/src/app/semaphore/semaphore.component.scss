@@ -1,15 +1,19 @@
+//panel section
 .semaphore-panel{
     margin: auto;
     background-color: #f9f9f9;
     width: 90%;
 }
-
-.panel-data {
-    align-self: start;
-    position: absolute;
-    left: 20px;
-    font-size: medium;
-    line-height: 2em;
+.data-section{
+    width: 100%;
+    height: 100%;
+}
+.ambient-data{
+    text-align: start;
+}
+.semaphores-data {
+    width: 25%;
+    margin: 0;
 }
 
 #left{
@@ -43,7 +47,7 @@ button a {
     vertical-align: middle;
 }
 .veichles{
-    font-size: medium;
+    font-size: small;
 }
 #details a {
     color: #607D8B;

@@ -13,12 +13,7 @@ export class SemaphoreComponent implements OnInit {
 
   constructor() { }
   
-  ngOnInit(): void {
-
-    // ottengo i valori 
-    // assegno i valori necessari
-
-  }
+  ngOnInit(){}
 
   details() {
     // ToDo
