@@ -48,6 +48,33 @@
         margin-left: auto;
     }
   }
+  .connection{
+    position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    height: 80px;
+    height: 25px;
+    width: 100%;
+    background-color: black;
+    text-align: center;
+    color: #fafafa;
+    font-size: medium;
+  }
+  .online{
+    background-color: #66bb6a;
+    -webkit-transition: background-color 2s ease-in-out;
+    -moz-transition: background-color 2s ease-in-out;
+    -o-transition: background-color 2s ease-in-out;
+    transition: background-color 2s ease-in-out;
+  }
+  .offline{
+    background-color: #ef5350;
+    -webkit-transition: background-color 2s ease-in-out;
+    -moz-transition: background-color 2s ease-in-out;
+    -o-transition: background-color 2s ease-in-out;
+    transition: background-color 2s ease-in-out;
+  }
   .content{
-    margin-top: 100px;
+    margin-top: 120px;
   }

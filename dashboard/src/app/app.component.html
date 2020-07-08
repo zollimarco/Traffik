@@ -3,6 +3,12 @@
   <span>Traffik</span>
   <span class="clock">{{clock | date: 'd MMM, y h:mm '}}</span>
 </div>
+<div class="connection" *ngIf="connection_status_bar" [ngClass]="{'online': connection_status === 'connect', 'offline': connection_status !== 'connect'}">
+  <span *ngIf="connection_status === 'connect'">Connesso</span>
+  <span *ngIf="connection_status === 'connect_error'">Errore di Connessione</span>
+  <span *ngIf="connection_status === 'connect_timeout'">Timeout(Se persiste aggiornare la pagina)</span>
+  <span *ngIf="connection_status === 'disconnect'">Disconnesso</span>
+</div>
 <div class="content">
   <app-search-bar></app-search-bar>
   <app-semaphore-list [crossroads]="crossroad"></app-semaphore-list>

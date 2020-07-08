@@ -24,41 +24,40 @@ export class SemaphoreListComponent implements OnInit {
   coordinates_stream: Observable<any>;
 
   address: string;
-  coordinates: Coordinates;
-  //fare una classe??? decidi tu fra
+  //ho pensato di implementare le coordinate nella classe dell'incrocio affinche ci il passaggio delle variabili per direttissimaa
 
-  coordinates_list: any = [];
+
   constructor(private http: HttpClient, private socket: SocketService) { }
 
   ngOnInit(): void {
-    let arrayIsNotEmpty: boolean = false;
 
+    //per quando non c'è l'invio dati
+    
+    this.crossroads.coordinates.latitude = 45.95160;
+    this.crossroads.coordinates.longitude = 12.68054;
     //------------------------------sottoiscrizione al flusso delle coordinate-------------------------
     this.coordinates_stream = this.socket.subToCoordinates();
     this.coordinates_stream_sub = this.coordinates_stream.subscribe((data: any) => {
       // Visualizzo la lista delle coordinate degli incroci
+
       console.log(data.Incroci);
+      this.crossroads.coordinates.latitude = data.Incroci[0].Latitudine;
+      this.crossroads.coordinates.longitude = data.Incroci[0].Longitudine;
 
-      // Ottengo il contenuto di data
-      this.coordinates_list = data.Incroci;
-
-      if (this.coordinates_list.length != 0) {
-        arrayIsNotEmpty = true;
-      }
-      console.log("check: " + arrayIsNotEmpty);
+      // Ottengo il contenuto di data (se piu semafori verifico l'id attraverso un loop)
+      //this.coordinates_list = data.Incroci;
     });
 
     this.socket.getCoordinates();
 
     //aggiungere un controllo per vedere che la variabile sia carica
-    if (arrayIsNotEmpty) {
-      this.coordinates.latitude = this.coordinates_list[0].Latitudine;
-      this.coordinates.longitude = this.coordinates_list[0].Longitudine;
+    //if (this.coordinates_list.length) {
+    // this.coordinates.latitude = this.coordinates_list[0].Latitudine;
+    // this.coordinates.longitude = this.coordinates_list[0].Longitudine;
 
-      let map_url = api_maps.reverse_url + api_maps.key + "&location=" + this.coordinates.latitude + "%2C" + this.coordinates.longitude + api_maps.end_reverse_url;
+      let map_url = api_maps.reverse_url + api_maps.key + "&location=" + this.crossroads.coordinates.latitude + "%2C" + this.crossroads.coordinates.longitude + api_maps.end_reverse_url;
 
       // Http request
-      let obj = new Object;
       this.http.get<MapsInfo>(map_url).subscribe(data => {
         let street = data.results[0].locations[0].street;
         let city = data.results[0].locations[0].adminArea5;
@@ -66,11 +65,8 @@ export class SemaphoreListComponent implements OnInit {
         // Formatto l'indirizzo
         this.address = street + " (" + city + ")";
       });
-
-      console.log("lat: " + this.coordinates.latitude);
-      console.log("lon: " + this.coordinates.longitude);
-      console.log(this.address);
-    }
+      //console.log(this.address);
+    //}
   }
 }
 

@@ -1,6 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { api_maps } from 'config/api.json';
-import { SemaphoreMap } from '../models/semaphore-map';
+import { SemaphoreMap, Coordinates } from '../models/semaphore-map';
 
 @Component({
   selector: 'app-semaphore-map',
@@ -12,12 +12,15 @@ export class SemaphoreMapComponent implements OnInit {
   image_url: string;
   semaphore_map: SemaphoreMap = new SemaphoreMap();
 
+  //coordinates
+  @Input() coordinates: Coordinates;
+
   
   constructor() {}
 
   ngOnInit(): void { 
-    this.semaphore_map.coordinates.latitude = 45.95160;
-    this.semaphore_map.coordinates.longitude = 12.68054;
+    this.semaphore_map.coordinates.latitude = this.coordinates.latitude;
+    this.semaphore_map.coordinates.longitude = this.coordinates.longitude;
     this.semaphore_map.size.height = 400;
     this.semaphore_map.size.width = 1000;
     this.semaphore_map.zoom = 18;

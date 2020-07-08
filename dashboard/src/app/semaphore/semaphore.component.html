@@ -9,7 +9,7 @@
     </mat-expansion-panel-header>
     <mat-grid-list cols="2" rowHeight="400px" style="padding-left: 0">
         <mat-grid-tile>
-            <app-semaphore-map></app-semaphore-map>
+            <app-semaphore-map [coordinates]="crossroad.coordinates"></app-semaphore-map>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <div class="data-section">

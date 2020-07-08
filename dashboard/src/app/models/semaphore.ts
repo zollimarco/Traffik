@@ -1,3 +1,5 @@
+import { Coordinates } from './semaphore-map';
+
 export class CrossRoad {
     //props
     id: number;
@@ -5,6 +7,7 @@ export class CrossRoad {
     humidity:number;
     pressure: number;
     temperature: number;
+    coordinates: Coordinates;
     semaphores: Semaphore[];
     /**
      * ctor
@@ -15,6 +18,7 @@ export class CrossRoad {
         this.humidity = 0;
         this.pressure = 0;
         this.temperature = 0;
+        this.coordinates = new Coordinates();
         this.semaphores = [];
     }
 }
