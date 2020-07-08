@@ -113,7 +113,7 @@ char secondiPrimaConfigurazione=30;
 unsigned char tmp;
 volatile char date[10];
 volatile char time[10];
-char fascia_oraria [2][23];
+int fascia_oraria [2][23];
 char indice_fascia;
 char rosso_comune = 2;
 char giallo = 5;
@@ -153,12 +153,12 @@ void main(void) {
     int pressione;
     TRISB = 0xFF;
     
-    uart_print(9,0,0,indice_fascia);
+    uart_print(9,0,0,indice_fascia); //segnale prima configurazione
     
     while(1)
     {
 
-        if(secondi >=60){
+        if(secondi >=60){ //ogni minuto invio i veicoli
             minuti ++;
             secondi = 0;
             char i = 0;
@@ -182,7 +182,7 @@ void main(void) {
             //UART_TxChar(ValoreScalato2);
             
             
-        if(minuti >= 1){
+        if(minuti >= 1){ //ogni tot minuti invio i dati della temperatura ecc
             minuti = 0;
             temperatura = read_ADC(0);
             
@@ -195,19 +195,20 @@ void main(void) {
             uart_print(0x04,pressione ,0,indice_fascia);
             TRISD = 0x00;
         }
+        //cambio display da stampare
           count_seg++;
             
         if(count_seg>3)
              count_seg=0;
         
-        if(old_stato != stato || stato == 6)
+        if(old_stato != stato || stato == 6) //se cambia lo stato dei semafori aggiorno i semafori
             semafori();//stati dei semafori
           
         //timer 7 segmenti
         timer();
         
 
-        
+        //controllo se vengono premuti i bottoni 
         if(!PORTBbits.RB0 && old_RB0){
             int valore = read_ADC(3);
             
@@ -283,10 +284,10 @@ void main(void) {
         
         
         
-        if(datoarrivato == 1){
+        if(datoarrivato == 1){ //arriva dato da terminale
             
             if(byte1 == id_incrocio && (byte3 & 0x0F)>=0 && (byte4>>3)>=0 && (byte4>>3)<24){   //controllo id incrocio    
-                fascia_oraria[(byte3 & 0x0F)][byte4>>3] = byte5;
+                fascia_oraria[(byte3 & 0x0F)][byte4>>3] = (byte4&0x07)<<4|byte5;
                 
             }
             datoarrivato = 0;
@@ -468,7 +469,7 @@ void timer(){
                     valore2=0;
                     break;
             }
-            
+                //decido i valori da stampare nel timer a 7 segmenti
             if(valore < 10) {
                 decine_s1 = 0;
                 unita_s1 = valore;
