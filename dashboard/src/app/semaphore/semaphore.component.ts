@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CrossRoad } from '../models/semaphore';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-semaphore',
@@ -11,7 +12,7 @@ export class SemaphoreComponent implements OnInit {
   @Input() crossroad: CrossRoad = new CrossRoad();
   @Input() address: string;
 
-  constructor() { }
+  constructor(private router: Router) { }
   
   ngOnInit(){}
 
@@ -19,6 +20,8 @@ export class SemaphoreComponent implements OnInit {
     // ToDo
     console.log("Dettagli");
     console.log(this.crossroad);
+    
+    this.router.navigateByUrl('details');
   }
 }
 

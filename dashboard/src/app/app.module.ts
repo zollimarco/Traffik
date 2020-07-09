@@ -17,7 +17,10 @@ import { SemaphoreMapComponent } from './semaphore-map/semaphore-map.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-import { url } from 'config/backend.json'
+import { url } from 'config/backend.json';
+import { SemaphoreDetailsComponent } from './semaphore-details/semaphore-details.component';
+import { HomeComponent } from './home/home.component'
+
 const config: SocketIoConfig = { url: url.protocol + url.ip + url.port, options: {} };
 
 @NgModule({
@@ -26,7 +29,9 @@ const config: SocketIoConfig = { url: url.protocol + url.ip + url.port, options:
     SemaphoreComponent,
     SemaphoreListComponent,
     SearchBarComponent,
-    SemaphoreMapComponent
+    SemaphoreMapComponent,
+    SemaphoreDetailsComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

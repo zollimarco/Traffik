@@ -29,7 +29,6 @@
                             stop_circle</mat-icon>
                     </p>
                     <div class="veichles">
-                        <strong>Veicoli: </strong> <br>
                         <table mat-table>
                             <th mat-header-cell>
                                 <mat-icon color="secondary"> local_shipping</mat-icon>
@@ -50,13 +49,11 @@
                 </div>
             </div>
 
-            <!--
             <mat-grid-tile-footer style="background-color: transparent;">
                 <div id="right">
-                    <button id="details" class="mat-button btn" (click)="details()"><a>Dettagli ></a></button>
+                    <button id="details" class="mat-button btn" (click)="details()"><a routerLink="details" [state]="crossroad" >Dettagli ></a></button>
                 </div>
             </mat-grid-tile-footer>
-            -->
         </mat-grid-tile>
     </mat-grid-list>
 </mat-expansion-panel>

@@ -9,9 +9,5 @@
   <span *ngIf="connection_status === 'connect_timeout'">Timeout(Se persiste aggiornare la pagina)</span>
   <span *ngIf="connection_status === 'disconnect'">Disconnesso</span>
 </div>
-<div class="content">
-  <app-search-bar></app-search-bar>
-  <app-semaphore-list [crossroads]="crossroad"></app-semaphore-list>
-</div>
 
 <router-outlet></router-outlet>
