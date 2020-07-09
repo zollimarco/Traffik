@@ -13,7 +13,13 @@
 .ambient-data{
     text-align: start;
 }
+
 .semaphores-data {
+    margin-top: 10px;
+}
+
+.semaphores-data p{
+    margin: 0px;
 }
 
 #left{
@@ -51,4 +57,9 @@ button a {
 }
 #details a {
     color: #607D8B;
+}
+
+table {
+    width: 100%;
+    text-align: left;
 }
