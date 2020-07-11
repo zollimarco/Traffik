@@ -27,10 +27,16 @@ export class SocketService {
   subToStream(){
     return this.socket.fromEvent<SensorData>("Traffik");  
   }
+  subToDetails(){
+    return this.socket.fromEvent<SensorData>("Dettagli");  
+  }
   subToCoordinates(){
     return this.socket.fromEvent<any>("Coordinate");  
   }
   getCoordinates() {
     this.socket.emit('GetIncroci');
+  }
+  details(id: number){
+    this.socket.emit("Dettagli", id);
   }
 }

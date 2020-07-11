@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { SocketService } from '../services/socket.service';
+import { Subscription } from 'rxjs';
+import { CrossRoad } from '../models/semaphore';
 
 @Component({
   selector: 'app-semaphore-details',
@@ -7,10 +10,41 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SemaphoreDetailsComponent implements OnInit {
 
-  constructor() { }
+  id: number = 3;
+  details_sub: Subscription;
+  crossroad: CrossRoad = new CrossRoad();
+  constructor(private socket: SocketService) { }
 
   ngOnInit(): void {
-    console.log(history.state.data)
+    this.details_sub = this.socket.subToDetails().subscribe((data) => {
+      console.log(data);
+      /*id_incrocio: 3
+        strade: Array(4)
+          0:
+          Auto: 0
+          Camion: 0
+          Moto: 0
+          id_strada: 1
+          1:
+          Auto: 0
+          Camion: 0
+          Moto: 0
+          id_strada: 2
+          2:
+          Auto: 0
+          Camion: 0
+          Moto: 0
+          id_strada: 3
+          3:
+          Auto: 0
+          Camion: 0
+          Moto: 0
+          id_strada: 4*/
+    });
+    this.socket.details(this.id);
   }
 
+  ngOnDestroy() {
+    this.details_sub.unsubscribe();
+  }
 }

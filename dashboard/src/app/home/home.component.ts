@@ -156,4 +156,7 @@ export class HomeComponent implements OnInit {
      });
   }
 
+  ngOnDestroy() {
+    this.semaphore_stream_sub.unsubscribe();
+  }
 }
