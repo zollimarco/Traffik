@@ -14,7 +14,7 @@
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <div class="data-section">
                 <div class="ambient-data">
-                    <span>Ultimo aggiornamento:</span> {{crossroad.date | date: 'd/M/yy, HH:mm'}} <br>
+                    <span>Ultimo aggiornamento:</span> <strong>{{crossroad.date | date: 'd/M/yy, HH:mm'}}</strong> <br>
                     <strong>Umidità:</strong> {{crossroad.humidity}}%
                     <strong>Temperatura:</strong> {{crossroad.temperature}} C°
                     <strong>Pressione:</strong> {{crossroad.pressure}} hPa
@@ -23,7 +23,7 @@
                 <div class="semaphores-data" *ngFor="let semaphore of crossroad.semaphores">
                     <hr>
                     <p>
-                        <strong>{{semaphore.id}} - </strong>
+                        <strong>Semaforo {{semaphore.id}} - </strong>
                         <mat-icon *ngIf="!semaphore.state" color="primary">stop_circle</mat-icon>
                         <mat-icon *ngIf="semaphore.state" [color]="semaphore.state === 2 ? 'warn' : 'accent'">
                             stop_circle</mat-icon>

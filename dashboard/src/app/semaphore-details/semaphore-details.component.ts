@@ -18,6 +18,14 @@ export class SemaphoreDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.details_sub = this.socket.subToDetails().subscribe((data) => {
       console.log(data);
+      this.crossroad.semaphores.forEach((semaphore, i) => {
+        if (semaphore.id === data[i].id_strada) {
+          semaphore.car = data[i].Auto;
+          semaphore.camion = data[i].Camion;
+          semaphore.moto = data[i].Moto;
+        }
+
+      });
       /*id_incrocio: 3
         strade: Array(4)
           0:
