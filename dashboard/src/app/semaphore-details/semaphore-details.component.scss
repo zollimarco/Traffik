@@ -1,8 +1,18 @@
 .details {
     margin-top: 120px;
 }
+.crossroad {
+    margin-left: 20px;
+    .crossroad-data {
+        font-size: large;
+        text-align: justify;
+        margin-left: 3%;
+        margin-top: 15px;
+        margin-bottom: 20px;
+        padding-left: 0
+    }
+}
 .graphs {
-
     .mat-card {
         align-items: center;
         justify-content: center;
@@ -12,4 +22,39 @@
         margin-top: 15px;
         margin-bottom: 20px;
     }
+}
+.data-section{
+    margin-left: 10px;
+    width: 100%;
+    height: 100%;
+}
+.ambient-data{
+    text-align: start;
+    .last-update{
+        margin-bottom: 15px;
+    }
+}
+hr{
+    border: 1px solid rgba(0, 0, 0, 0.12);;
+}
+.semaphores-data {
+    margin-top: 10px;
+}
+
+.semaphores-data p{
+    margin: 0px;
+}
+button a {
+    font-size: large;
+}
+
+.mat-edit-icon{
+    font-size: medium;
+    color: #f9f9f9;
+}
+.mat-icon{
+    vertical-align: middle;
+}
+.veichles{
+    font-size: small;
 }

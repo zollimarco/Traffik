@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { api_maps } from 'config/api.json';
 import { SemaphoreMap, Coordinates } from '../models/semaphore-map';
+import { MapquestService } from '../services/mapquest.service';
 
 @Component({
   selector: 'app-semaphore-map',
@@ -16,7 +17,7 @@ export class SemaphoreMapComponent implements OnInit {
   @Input() coordinates: Coordinates;
 
   
-  constructor() {}
+  constructor(private mapquest: MapquestService) {}
 
   ngOnInit(): void { 
     this.semaphore_map.coordinates.latitude = this.coordinates.latitude;
@@ -25,7 +26,7 @@ export class SemaphoreMapComponent implements OnInit {
     this.semaphore_map.size.width = 1000;
     this.semaphore_map.zoom = 18;
 
-    this.image_url = api_maps.url + api_maps.key + "&size=" + this.semaphore_map.size.width + "," + this.semaphore_map.size.height + "&type=map&imagetype=jpg&zoom=" + this.semaphore_map.zoom + "&scalebar=false&traffic=false&center=" + this.semaphore_map.coordinates.latitude + "," + this.semaphore_map.coordinates.longitude + api_maps.end_url;
+    this.image_url = this.mapquest.getMapImage(this.semaphore_map);
   
     // ritorno anche la v
   }

@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
-import { api_maps } from 'config/api.json';
 import { CrossRoad } from '../models/semaphore';
 import { HttpClient } from '@angular/common/http';
 import { Subscription, Observable } from 'rxjs';
 import { SocketService } from '../services/socket.service';
-import { Coordinates } from '../models/semaphore-map';
+import { MapquestService } from '../services/mapquest.service';
 
 @Component({
   selector: 'app-semaphore-list',
@@ -27,7 +26,7 @@ export class SemaphoreListComponent implements OnInit {
   //ho pensato di implementare le coordinate nella classe dell'incrocio affinche ci il passaggio delle variabili per direttissimaa
 
 
-  constructor(private http: HttpClient, private socket: SocketService) { }
+  constructor(private socket: SocketService, private mapquest: MapquestService) { }
 
   ngOnInit(): void {
 
@@ -55,32 +54,14 @@ export class SemaphoreListComponent implements OnInit {
     // this.coordinates.latitude = this.coordinates_list[0].Latitudine;
     // this.coordinates.longitude = this.coordinates_list[0].Longitudine;
 
-      let map_url = api_maps.reverse_url + api_maps.key + "&location=" + this.crossroads.coordinates.latitude + "%2C" + this.crossroads.coordinates.longitude + api_maps.end_reverse_url;
+    this.mapquest.getAddress(this.crossroads.coordinates, (data) => {
+      let street = data.results[0].locations[0].street;
+      let city = data.results[0].locations[0].adminArea5;
 
-      // Http request
-      this.http.get<MapsInfo>(map_url).subscribe(data => {
-        let street = data.results[0].locations[0].street;
-        let city = data.results[0].locations[0].adminArea5;
-
-        // Formatto l'indirizzo
-        this.address = street + " (" + city + ")";
-      });
+      // Formatto l'indirizzo
+      this.address = street + " (" + city + ")";
+    });
       //console.log(this.address);
     //}
   }
-}
-
-export interface MapsInfo {
-  info: Object;
-  results: Result;
-}
-
-interface Result {
-  providedLocation: Object;
-  locations: Location
-}
-
-interface Location {
-  street: string;
-  adminArea5: string
 }

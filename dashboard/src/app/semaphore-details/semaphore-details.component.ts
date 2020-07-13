@@ -3,7 +3,6 @@ import { SocketService } from '../services/socket.service';
 import { Subscription } from 'rxjs';
 import { CrossRoad } from '../models/semaphore';
 import { ActivatedRoute } from '@angular/router';
-import { isNumber } from 'util';
 
 @Component({
   selector: 'app-semaphore-details',
@@ -12,13 +11,13 @@ import { isNumber } from 'util';
 })
 export class SemaphoreDetailsComponent implements OnInit {
 
-  id: number = 3;
+
   details_sub: Subscription;
   crossroad: CrossRoad = new CrossRoad();
   constructor(private socket: SocketService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.id = parseInt(this.route.snapshot.paramMap.get('id'));
+    this.crossroad.id = parseInt(this.route.snapshot.paramMap.get('id'));
     this.crossroad.coordinates.latitude = Number(this.route.snapshot.paramMap.get('latitude'));
     this.crossroad.coordinates.longitude = Number(this.route.snapshot.paramMap.get('longitude'));
     this.details_sub = this.socket.subToDetails().subscribe((data) => {
@@ -54,7 +53,7 @@ export class SemaphoreDetailsComponent implements OnInit {
           Moto: 0
           id_strada: 4*/
     });
-    this.socket.details(this.id);
+    this.socket.details(this.crossroad.id);
   }
 
   ngOnDestroy() {

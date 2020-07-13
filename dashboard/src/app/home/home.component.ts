@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     
-    //-------------per quando pozza non manda i dati----------------
+    //-------------Sample per quando non ci sono dati----------------
     var obj = {
       id: 1,
       date: new Date(),
@@ -48,11 +48,11 @@ export class HomeComponent implements OnInit {
      this.semaphore_stream_sub = this.semaphore_stream.subscribe((data: SensorData) => {
        console.log("inzio callback" + data);
  
+       //in caso di piu incroci verra aggiunto un for 
        if (this.crossroad.id === data.id_incrocio) {
          switch (data.Sensore) {
            case "Stato_Semaforo":
              if (!this.crossroad.semaphores[data.Strada + 1]) {
-               console.log("stato semaforo");
                this.crossroad.semaphores[data.Strada - 1] = {
                  id: data.Strada - 1,
                  state: 0,
@@ -102,7 +102,6 @@ export class HomeComponent implements OnInit {
  
        //nuovo semaforo
  
-       console.log("nuovo");
        var obj = {
          id: data.id_incrocio,
          date: data.Data,
