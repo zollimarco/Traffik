@@ -6,7 +6,7 @@ import { HomeComponent } from './home/home.component';
 const routes: Routes = [
   { path: 'home', component: HomeComponent},
   //{ path: 'details', component: SemaphoreDetailsComponent}
-  { path: 'details/:id', component: SemaphoreDetailsComponent}
+  { path: 'details/:id/:latitude/:longitude', component: SemaphoreDetailsComponent}
 ];
 
 @NgModule({

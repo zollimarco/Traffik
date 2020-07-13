@@ -22,7 +22,7 @@ export class SemaphoreComponent implements OnInit {
     console.log(this.crossroad);
     
     //this.router.navigateByUrl('details');
-    this.router.navigate(['/details', this.crossroad.id]);
+    this.router.navigate(['/details', this.crossroad.id, this.crossroad.coordinates.latitude, this.crossroad.coordinates.longitude]);
   }
 }
 
