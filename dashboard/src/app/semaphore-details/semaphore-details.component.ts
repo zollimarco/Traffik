@@ -19,12 +19,8 @@ export class SemaphoreDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.id = parseInt(this.route.snapshot.paramMap.get('id'));
-    console.log(this.id);
     this.crossroad.coordinates.latitude = Number(this.route.snapshot.paramMap.get('latitude'));
-    console.log(this.crossroad.coordinates.latitude);
     this.crossroad.coordinates.longitude = Number(this.route.snapshot.paramMap.get('longitude'));
-    console.log(this.crossroad.coordinates.longitude);
-
     this.details_sub = this.socket.subToDetails().subscribe((data) => {
       console.log(data);
       this.crossroad.semaphores.forEach((semaphore, i) => {
