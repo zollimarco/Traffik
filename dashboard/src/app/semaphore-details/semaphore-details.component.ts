@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { SocketService } from '../services/socket.service';
 import { Subscription } from 'rxjs';
 import { CrossRoad } from '../models/semaphore';
+import { ActivatedRoute } from '@angular/router';
+import { isNumber } from 'util';
 
 @Component({
   selector: 'app-semaphore-details',
@@ -13,9 +15,10 @@ export class SemaphoreDetailsComponent implements OnInit {
   id: number = 3;
   details_sub: Subscription;
   crossroad: CrossRoad = new CrossRoad();
-  constructor(private socket: SocketService) { }
+  constructor(private socket: SocketService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    this.id = parseInt(this.route.snapshot.paramMap.get('id'));
     this.details_sub = this.socket.subToDetails().subscribe((data) => {
       console.log(data);
       this.crossroad.semaphores.forEach((semaphore, i) => {

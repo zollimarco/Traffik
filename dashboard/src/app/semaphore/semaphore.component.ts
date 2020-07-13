@@ -21,7 +21,8 @@ export class SemaphoreComponent implements OnInit {
     console.log("Dettagli");
     console.log(this.crossroad);
     
-    this.router.navigateByUrl('details');
+    //this.router.navigateByUrl('details');
+    this.router.navigate(['/details', this.crossroad.id]);
   }
 }
 
