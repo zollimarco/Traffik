@@ -24,6 +24,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { url } from 'config/backend.json';
 const config: SocketIoConfig = { url: url.protocol + url.ip + url.port, options: {} };
+//Plugins
+import { SafePipeModule } from 'safe-pipe';
 
 @NgModule({
   declarations: [
@@ -42,6 +44,7 @@ const config: SocketIoConfig = { url: url.protocol + url.ip + url.port, options:
     BrowserAnimationsModule,
     FormsModule,
     SocketIoModule.forRoot(config),
+    SafePipeModule,
     MatExpansionModule,
     MatButtonModule,
     MatFormFieldModule,

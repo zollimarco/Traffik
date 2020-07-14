@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class SemaphoreComponent implements OnInit {
 
   @Input() crossroad: CrossRoad = new CrossRoad();
+  @Input() image_url: string;
   @Input() address: string;
 
   constructor(private router: Router) { }
@@ -18,7 +19,7 @@ export class SemaphoreComponent implements OnInit {
 
   details() {    
     //this.router.navigateByUrl('details');
-    this.router.navigate(['/details', this.crossroad.id, this.crossroad.coordinates.latitude, this.crossroad.coordinates.longitude]);
+    this.router.navigate(['/details', this.crossroad.id, this.crossroad.humidity, this.crossroad.temperature, this.crossroad.pressure, this.crossroad.coordinates.latitude, this.crossroad.coordinates.longitude]);
   }
 }
 

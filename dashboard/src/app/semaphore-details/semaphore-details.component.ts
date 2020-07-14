@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { SocketService } from '../services/socket.service';
 import { Subscription } from 'rxjs';
-import { CrossRoad } from '../models/semaphore';
+import { CrossRoad, Semaphore } from '../models/semaphore';
 import { ActivatedRoute } from '@angular/router';
-
+import { SemaphoreMap } from '../models/semaphore-map';
+import { MapquestService } from '../services/mapquest.service';
+import { DomSanitizer } from '@angular/platform-browser';
 @Component({
   selector: 'app-semaphore-details',
   templateUrl: './semaphore-details.component.html',
@@ -11,49 +13,60 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SemaphoreDetailsComponent implements OnInit {
 
-
   details_sub: Subscription;
   crossroad: CrossRoad = new CrossRoad();
-  constructor(private socket: SocketService, private route: ActivatedRoute) { }
+
+  //MapQuest
+  semaphore_map: SemaphoreMap = new SemaphoreMap();
+  image_url: string;
+  address: string;
+
+  //Grafana
+  traffic_url: string;
+  meteo_url: string;
+
+  constructor(private socket: SocketService, private route: ActivatedRoute, private mapquest: MapquestService, public sanitizer: DomSanitizer ) { }
 
   ngOnInit(): void {
     this.crossroad.id = parseInt(this.route.snapshot.paramMap.get('id'));
+    this.crossroad.humidity = parseInt(this.route.snapshot.paramMap.get('humidity'));
+    this.crossroad.temperature = parseInt(this.route.snapshot.paramMap.get('temperature'));
+    this.crossroad.pressure = parseInt(this.route.snapshot.paramMap.get('pressure'));
     this.crossroad.coordinates.latitude = Number(this.route.snapshot.paramMap.get('latitude'));
     this.crossroad.coordinates.longitude = Number(this.route.snapshot.paramMap.get('longitude'));
-    this.details_sub = this.socket.subToDetails().subscribe((data) => {
-      console.log(data);
-      this.crossroad.semaphores.forEach((semaphore, i) => {
-        if (semaphore.id === data[i].id_strada) {
-          semaphore.car = data[i].Auto;
-          semaphore.camion = data[i].Camion;
-          semaphore.moto = data[i].Moto;
-        }
 
+    //MAPQUEST__________________________________________________________________________
+    //Image Map
+    this.semaphore_map.coordinates.latitude = this.crossroad.coordinates.latitude;
+    this.semaphore_map.coordinates.longitude = this.crossroad.coordinates.longitude;
+    this.semaphore_map.size.height = 500;
+    this.semaphore_map.size.width = 1000;
+    this.semaphore_map.zoom = 18;
+
+    this.image_url = this.mapquest.getMapImage(this.semaphore_map);
+
+    this.mapquest.getAddress(this.semaphore_map.coordinates, (data) => {
+      let street = data.results[0].locations[0].street;
+      let city = data.results[0].locations[0].adminArea5;
+
+      // Formatto l'indirizzo
+      this.address = street + " (" + city + ")";
+    });
+
+    this.details_sub = this.socket.subToDetails().subscribe((data) => {
+      data.strade.forEach((strada, i) => {
+        this.crossroad.semaphores[i] = new Semaphore();
+        this.crossroad.semaphores[i].id = strada.id_strada;
+        this.crossroad.semaphores[i].car = strada.Auto;
+        this.crossroad.semaphores[i].camion = strada.Camion;
+        this.crossroad.semaphores[i].moto = strada.Moto;
       });
-      /*id_incrocio: 3
-        strade: Array(4)
-          0:
-          Auto: 0
-          Camion: 0
-          Moto: 0
-          id_strada: 1
-          1:
-          Auto: 0
-          Camion: 0
-          Moto: 0
-          id_strada: 2
-          2:
-          Auto: 0
-          Camion: 0
-          Moto: 0
-          id_strada: 3
-          3:
-          Auto: 0
-          Camion: 0
-          Moto: 0
-          id_strada: 4*/
     });
     this.socket.details(this.crossroad.id);
+
+    //Graphana
+    this.traffic_url = "http://localhost:3000/d-solo/aaLTzm7Gz/traffik?orgId=1&from=1594043706363&to=1594137480474&var-id=" + this.crossroad.id + "&panelId=2";
+    this.meteo_url = "http://localhost:3000/d-solo/aaLTzm7Gz/traffik?orgId=1&from=1594132880904&to=1594737680904&var-id=" + this.crossroad.id + "&panelId=4"
   }
 
   ngOnDestroy() {

@@ -1,13 +1,17 @@
 <div class="details">
     <div class="crossroad">
-        <mat-grid-list cols="2" rowHeight="400px"class="crossroad-data">
+        <mat-grid-list cols="2" rowHeight="500px" class="crossroad-data">
             <mat-grid-tile>
-                <app-semaphore-map [coordinates]="crossroad.coordinates"></app-semaphore-map>
+                <app-semaphore-map [image_url]="image_url"></app-semaphore-map>
             </mat-grid-tile>
             <mat-grid-tile [colspan]="1" [rowspan]="1">
                 <div class="data-section">
+                    <div class="address">
+                        <h1>{{address}}</h1>
+                    </div>
                     <div class="ambient-data">
-                        <span class="last-update">Ultimo aggiornamento: <strong>{{crossroad.date | date: 'd/M/yy, HH:mm'}}</strong></span> 
+                        <span class="last-update">Ultimo aggiornamento:
+                            <strong>{{crossroad.date | date: 'd/M/yy, HH:mm'}}</strong></span>
                         <hr>
                         <strong>Umidità:</strong> {{crossroad.humidity}}%
                         <strong>Temperatura:</strong> {{crossroad.temperature}} C°
@@ -17,24 +21,21 @@
                     <div class="semaphores-data" *ngFor="let semaphore of crossroad.semaphores">
                         <hr>
                         <p>
-                            <strong>Semaforo {{semaphore.id}} - </strong>
-                            <mat-icon *ngIf="!semaphore.state" color="primary">stop_circle</mat-icon>
-                            <mat-icon *ngIf="semaphore.state" [color]="semaphore.state === 2 ? 'warn' : 'accent'">
-                                stop_circle</mat-icon>
+                            <strong>Semaforo {{semaphore.id}} </strong>
                         </p>
                         <div class="veichles">
                             <table mat-table>
                                 <th mat-header-cell>
-                                    <mat-icon color="secondary"> local_shipping</mat-icon>
+                                    <mat-icon color="secondary">local_shipping</mat-icon>
                                 </th>
                                 <td mat-cell><strong>{{semaphore.camion}}</strong></td>
-    
+
                                 <th>
-                                    <mat-icon color="secondary"> directions_car</mat-icon>
+                                    <mat-icon color="secondary">directions_car</mat-icon>
                                 </th>
                                 <td><strong>{{semaphore.car}}</strong></td>
                                 <th>
-                                    <mat-icon color="secondary"> motorcycle</mat-icon>
+                                    <mat-icon color="secondary">motorcycle</mat-icon>
                                 </th>
                                 <td><strong>{{semaphore.moto}}</strong></td>
                             </table>
@@ -49,11 +50,11 @@
             <mat-card-header>
                 <div mat-card-avatar class="example-header-image"></div>
                 <mat-card-title><strong>Traffico</strong></mat-card-title>
-                <mat-card-subtitle>Utlimi 7 giorni</mat-card-subtitle>
+                <mat-card-subtitle>Ultimi 7 giorni</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content>
                 <iframe
-                    src="http://localhost:3000/d-solo/aaLTzm7Gz/traffik?orgId=1&from=1593878095574&to=1594482895575&panelId=2"
+                    [src]="traffic_url | safe :'resourceUrl'"
                     width="900" height="200" frameborder="0"></iframe>
             </mat-card-content>
         </mat-card>
@@ -65,7 +66,7 @@
             </mat-card-header>
             <mat-card-content>
                 <iframe
-                    src="http://localhost:3000/d-solo/aaLTzm7Gz/traffik?orgId=1&from=1593878095574&to=1594482895575&panelId=2"
+                    [src]="meteo_url | safe :'resourceUrl'"
                     width="900" height="200" frameborder="0"></iframe>
             </mat-card-content>
         </mat-card>

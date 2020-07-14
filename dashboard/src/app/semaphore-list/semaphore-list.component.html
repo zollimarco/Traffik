@@ -4,5 +4,7 @@
     <button mat-button color="warn" (click)="accordion.closeAll()">Chiudi tutto</button>
 </div>
 <mat-accordion class="headers-align" multi>
-    <app-semaphore [crossroad]="crossroads" [address]="address"></app-semaphore>
+    <div *ngFor="let crossroad of crossroads">
+        <app-semaphore [crossroad]="crossroad" [address]="address" [image_url]="image_url"></app-semaphore>
+    </div>
 </mat-accordion>

@@ -42,6 +42,8 @@ export class AppComponent {
       else {
         this.connection_status = 'connect';
       }
+      console.log('connesso');
+      
     });
     //connection error
     this.connect_error_sub = this.socket.connectError().subscribe(() => {

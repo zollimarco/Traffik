@@ -23,6 +23,7 @@
     "@angular/router": "~9.1.7",
     "ngx-socket-io": "^3.0.1",
     "rxjs": "~6.5.4",
+    "safe-pipe": "^1.0.3",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
   },

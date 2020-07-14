@@ -9,12 +9,12 @@
     </mat-expansion-panel-header>
     <mat-grid-list cols="2" rowHeight="400px" style="padding-left: 0">
         <mat-grid-tile>
-            <app-semaphore-map [coordinates]="crossroad.coordinates"></app-semaphore-map>
+            <app-semaphore-map [image_url]="image_url"></app-semaphore-map>
         </mat-grid-tile>
         <mat-grid-tile [colspan]="1" [rowspan]="1">
             <div class="data-section">
                 <div class="ambient-data">
-                    <span>Ultimo aggiornamento:</span> <strong>{{crossroad.date | date: 'd/M/yy, HH:mm'}}</strong> <br>
+                    <span>Ultimo aggiornamento:</span> <strong>{{crossroad.date}}</strong> <br>
                     <strong>Umidità:</strong> {{crossroad.humidity}}%
                     <strong>Temperatura:</strong> {{crossroad.temperature}} C°
                     <strong>Pressione:</strong> {{crossroad.pressure}} hPa

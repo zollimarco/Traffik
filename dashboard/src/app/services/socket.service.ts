@@ -28,7 +28,7 @@ export class SocketService {
     return this.socket.fromEvent<SensorData>("Traffik");  
   }
   subToDetails(){
-    return this.socket.fromEvent<SensorData>("Dettagli");  
+    return this.socket.fromEvent<any>("Dettagli");  
   }
   subToCoordinates(){
     return this.socket.fromEvent<any>("Coordinate");  

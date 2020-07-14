@@ -10,25 +10,10 @@ import { MapquestService } from '../services/mapquest.service';
 })
 export class SemaphoreMapComponent implements OnInit {
 
-  image_url: string;
-  semaphore_map: SemaphoreMap = new SemaphoreMap();
-
-  //coordinates
-  @Input() coordinates: Coordinates;
-
+  @Input() image_url: string;
   
-  constructor(private mapquest: MapquestService) {}
+  constructor() {}
 
-  ngOnInit(): void { 
-    this.semaphore_map.coordinates.latitude = this.coordinates.latitude;
-    this.semaphore_map.coordinates.longitude = this.coordinates.longitude;
-    this.semaphore_map.size.height = 400;
-    this.semaphore_map.size.width = 1000;
-    this.semaphore_map.zoom = 18;
-
-    this.image_url = this.mapquest.getMapImage(this.semaphore_map);
-  
-    // ritorno anche la v
-  }
+  ngOnInit(): void { }
 
 }
