@@ -153,7 +153,7 @@ void main(void) {
     int pressione;
     TRISB = 0xFF;
     
-    uart_print(9,0,0,indice_fascia); //segnale prima configurazione
+    uart_print(0,0,0,indice_fascia); //segnale prima configurazione
     
     while(1)
     {
