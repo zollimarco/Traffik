@@ -1,3 +1,4 @@
+
 const { EventHubConsumerClient } = require("@azure/event-hubs");
 const Influx = require('influx');
 const influx = new Influx.InfluxDB({
@@ -18,13 +19,13 @@ var printError = function (err) {
 };
 
 var connectionConfig = {
-  server: 'itszolli.database.windows.net',
-  userName: 'ZolliMarco',
-  password: 'Vmware1!',
+  server: 'pwsmartcross.database.windows.net',
+  userName: 'its2020',
+  password: 'Projectwork2020',
   options: {
     // If you are on Microsoft Azure, you need encryption:
     encrypt: true,
-    database: 'ProvaTraffik'
+    database: 'smartcross'
   }
 };
 var TYPES = require('tedious').TYPES;
@@ -59,6 +60,7 @@ pool.on('error', function (err) {
 
 let onlineClients = new Set();
 
+let json = null;
 
 function onNewWebsocketConnection(socket) {
   console.info(`Socket ${socket.id} has connected.`);
@@ -73,8 +75,24 @@ function onNewWebsocketConnection(socket) {
       "Incroci": []
     }
     inviaCoordinate();
-    
+
   });
+
+socket.on("Dettagli", id => {
+    console.log("Richiesta dettagli" + id);
+    json = {
+    "id_incrocio" : id,
+    strade: [
+        { "id_strada":1, "Auto":0,"Camion":0,"Moto":0  },
+        { "id_strada":2, "Auto":0,"Camion":0,"Moto":0 },
+        { "id_strada":3, "Auto":0,"Camion":0,"Moto":0 },
+        { "id_strada":4, "Auto":0,"Camion":0,"Moto":0 }
+      ]
+}
+    
+	queryInflux(id);
+  });
+
 }
 
 
@@ -142,8 +160,8 @@ var printMessages = function (messages) {
         }
 
         WriteContatore(id_incrocio, Sensore, Valore, Fascia_Oraria, Strada, sem)
-        //COMMENTOOOOOOOOOOOOOOOOOOOOOOOO
-        //scriviTraffico(id_incrocio, sem, Strada, Fascia_Oraria, Data_in, Sensore, Valore);
+	//COMMENTTOOOOOOOOOOOOOOOOOOOOO
+       // scriviTraffico(id_incrocio, sem, Strada, Fascia_Oraria, Data_in, Sensore, Valore);
       } break;
       default: {
 
@@ -314,7 +332,7 @@ function inviaCoordinate() {
    
           vett.Incroci.push(json_obj);
           io.emit("Coordinate", vett);
-          console.log(vett);
+	  console.log(vett);
       }});
 
       if (query.hasMoreResults) {
@@ -347,5 +365,52 @@ function startServer() {
   // will send one message per second to all its clients
   let secondsSinceServerStarted = 0;
 }
+
+function queryInflux(idInc) {/*
+    influx.query("SELECT * FROM traffico WHERE time <= now() AND time >= now() - 1d ")
+        .then(result => response.status(200).json(result))
+        .catch(error => response.status(500).json({ error }));*/
+
+
+    influx.query("SELECT * FROM traffico WHERE time <= now() AND time >= now() - 20d ")
+        .catch(err => {
+            console.log(err);
+        })
+        .then(results => {
+            let vsar = results;
+            //console.log(vsar.length);
+            //console.log(JSON.stringify(results));
+            
+            for(var i=0;i< vsar.length;i++){
+                switch(vsar[i].id_strada){
+                    case "1":{
+                        json.strade[0].Auto+= vsar[i].Auto;
+                        json.strade[0].Camion+= vsar[i].Camion;
+                        json.strade[0].Moto+= vsar[i].Moto;
+                    }break;
+                    case "2":{
+                        json.strade[1].Auto+= vsar[i].Auto;
+                        json.strade[1].Camion+= vsar[i].Camion;
+                        json.strade[1].Moto+= vsar[i].Moto;
+                    }break;
+                    case "3":  {
+                        json.strade[2].Auto+= vsar[i].Auto;
+                        json.strade[2].Camion+= vsar[i].Camion;
+                        json.strade[2].Moto+= vsar[i].Moto;
+                    }break;  
+                    case "4":{
+                        json.strade[3].Auto+= vsar[i].Auto;
+                        json.strade[3].Camion+= vsar[i].Camion;
+                        json.strade[3].Moto+= vsar[i].Moto;
+                    }break;
+                }
+
+            }
+            //console.log(json);
+	io.emit("Dettagli",json);
+        });
+
+}
+
 
 startServer();
