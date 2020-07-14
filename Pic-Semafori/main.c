@@ -182,7 +182,7 @@ void main(void) {
             //UART_TxChar(ValoreScalato2);
             
             
-        if(minuti >= 1){ //ogni tot minuti invio i dati della temperatura ecc
+        if(minuti >= 30){ //ogni tot minuti invio i dati della temperatura ecc
             minuti = 0;
             temperatura = read_ADC(0);
             
