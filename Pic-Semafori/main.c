@@ -227,11 +227,11 @@ void main(void) {
             int valore = read_ADC(4);
             
             if(valore < 250 && valore >= 0){
-                arrayMoto[0] ++;
+                arrayMoto[1] ++;
             }else if(valore >250 && valore < 500){
-                arrayAuto[0] ++;
+                arrayAuto[1] ++;
             }else {
-                arraycamion[0] ++;
+                arraycamion[1] ++;
             }
         }
         old_RB1 = PORTBbits.RB1;
@@ -240,11 +240,11 @@ void main(void) {
             int valore = read_ADC(5);
             
             if(valore < 250 && valore >= 0){
-                arrayMoto[0] ++;
+                arrayMoto[2] ++;
             }else if(valore >250 && valore < 500){
-                arrayAuto[0] ++;
+                arrayAuto[2] ++;
             }else {
-                arraycamion[0] ++;
+                arraycamion[2] ++;
             }
         }
         old_RB2 = PORTBbits.RB2;
@@ -253,11 +253,11 @@ void main(void) {
             int valore = read_ADC(6);
             
             if(valore < 250 && valore >= 0){
-                arrayMoto[0] ++;
+                arrayMoto[3] ++;
             }else if(valore >250 && valore < 500){
-                arrayAuto[0] ++;
+                arrayAuto[3] ++;
             }else {
-                arraycamion[0] ++;
+                arraycamion[3] ++;
             }
         }
         
