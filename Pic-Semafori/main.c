@@ -153,7 +153,7 @@ void main(void) {
     int pressione;
     TRISB = 0xFF;
     
-    uart_print(9,0,0,indice_fascia); //segnale prima configurazione
+    uart_print(0,0,0,indice_fascia); //segnale prima configurazione
     
     while(1)
     {
@@ -182,7 +182,7 @@ void main(void) {
             //UART_TxChar(ValoreScalato2);
             
             
-        if(minuti >= 1){ //ogni tot minuti invio i dati della temperatura ecc
+        if(minuti >= 30){ //ogni tot minuti invio i dati della temperatura ecc
             minuti = 0;
             temperatura = read_ADC(0);
             
@@ -227,11 +227,11 @@ void main(void) {
             int valore = read_ADC(4);
             
             if(valore < 250 && valore >= 0){
-                arrayMoto[0] ++;
+                arrayMoto[1] ++;
             }else if(valore >250 && valore < 500){
-                arrayAuto[0] ++;
+                arrayAuto[1] ++;
             }else {
-                arraycamion[0] ++;
+                arraycamion[1] ++;
             }
         }
         old_RB1 = PORTBbits.RB1;
@@ -240,11 +240,11 @@ void main(void) {
             int valore = read_ADC(5);
             
             if(valore < 250 && valore >= 0){
-                arrayMoto[0] ++;
+                arrayMoto[2] ++;
             }else if(valore >250 && valore < 500){
-                arrayAuto[0] ++;
+                arrayAuto[2] ++;
             }else {
-                arraycamion[0] ++;
+                arraycamion[2] ++;
             }
         }
         old_RB2 = PORTBbits.RB2;
@@ -253,11 +253,11 @@ void main(void) {
             int valore = read_ADC(6);
             
             if(valore < 250 && valore >= 0){
-                arrayMoto[0] ++;
+                arrayMoto[3] ++;
             }else if(valore >250 && valore < 500){
-                arrayAuto[0] ++;
+                arrayAuto[3] ++;
             }else {
-                arraycamion[0] ++;
+                arraycamion[3] ++;
             }
         }
         
