@@ -184,7 +184,7 @@ async function main() {
   }
 
   // Create the client to connect to the default consumer group of the Event Hub
-  const consumerClient = new EventHubConsumerClient("$Default", connectionString);
+  const consumerClient = new EventHubConsumerClient("conforapi", connectionString);
 
   // Subscribe to messages from all partitions as below
   // To subscribe to messages from a single partition, use the overload of the same method.
