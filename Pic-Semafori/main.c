@@ -154,6 +154,15 @@ void main(void) {
     TRISB = 0xFF;
     
     uart_print(0,0,0,indice_fascia); //segnale prima configurazione
+    temperatura = read_ADC(0);
+            
+    uart_print(0x02,temperatura ,0,indice_fascia);
+            
+    umidita = read_ADC(1) >> 2;
+    uart_print(0x03,umidita / 2.55 ,0,indice_fascia);
+            
+    pressione = read_ADC(2);
+    uart_print(0x04,pressione ,0,indice_fascia);
     
     while(1)
     {
