@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
-import { CrossRoad } from '../models/semaphore';
+import { CrossRoad, Semaphore } from '../models/semaphore';
 import { Subscription, Observable } from 'rxjs';
 import { SocketService } from '../services/socket.service';
 import { MapquestService } from '../services/mapquest.service';
@@ -39,28 +39,39 @@ export class SemaphoreListComponent implements OnInit {
       console.log(data);
 
       // Visualizzo la lista delle coordinate degli incroci
-      this.crossroads.forEach((crossroad, i) => {
-        if (data.Incroci[i].id_incrocio === crossroad.id) {
-          crossroad.coordinates.latitude = data.Incroci[i].Latitudine;
-          crossroad.coordinates.longitude = data.Incroci[i].Longitudine;
+      data.Incroci.forEach((crossroad) => {
+        let new_c = new CrossRoad();
+        new_c.id = crossroad.id_incrocio;
+        new_c.coordinates.latitude = crossroad.Latitudine;
+        new_c.coordinates.longitude = crossroad.Longitudine;
+        for (let i = 0; i < 4; i++) {
+          new_c.semaphores[i] = new Semaphore();
+          new_c.semaphores[i].id = i + 1;
         }
+        this.crossroads.push(new_c);
       });
 
-      this.mapquest.getAddress(this.crossroads[0].coordinates, (data) => {
-        let street = data.results[0].locations[0].street;
-        let city = data.results[0].locations[0].adminArea5;
-
-        // Formatto l'indirizzo
-        this.address = street + " (" + city + ")";
-      });
-
-      this.semaphore_map.coordinates.latitude = this.crossroads[0].coordinates.latitude;
-      this.semaphore_map.coordinates.longitude = this.crossroads[0].coordinates.longitude;
+      //mapquest
       this.semaphore_map.size.height = 400;
       this.semaphore_map.size.width = 1000;
       this.semaphore_map.zoom = 18;
 
-      this.image_url = this.mapquest.getMapImage(this.semaphore_map);
+      this.crossroads.forEach(crossroad => {
+        //image url
+        this.semaphore_map.coordinates.latitude = crossroad.coordinates.latitude;
+        this.semaphore_map.coordinates.longitude = crossroad.coordinates.longitude;
+  
+        crossroad.map_url = this.mapquest.getMapImage(this.semaphore_map);
+
+        //address
+        this.mapquest.getAddress(crossroad.coordinates, (data) => {
+          let street = data.results[0].locations[0].street;
+          let city = data.results[0].locations[0].adminArea5;
+
+          // Formatto l'indirizzo
+          crossroad.address = street + " (" + city + ")";
+        });
+      });
       // Ottengo il contenuto di data (se piu semafori verifico l'id attraverso un loop)
       //this.coordinates_list = data.Incroci;
     });

@@ -10,8 +10,6 @@ import { Router } from '@angular/router';
 export class SemaphoreComponent implements OnInit {
 
   @Input() crossroad: CrossRoad = new CrossRoad();
-  @Input() image_url: string;
-  @Input() address: string;
 
   constructor(private router: Router) { }
   

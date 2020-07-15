@@ -65,8 +65,8 @@ export class SemaphoreDetailsComponent implements OnInit {
     this.socket.details(this.crossroad.id);
 
     //Graphana
-    this.traffic_url = "http://localhost:3000/d-solo/aaLTzm7Gz/traffik?orgId=1&from=1594043706363&to=1594137480474&var-id=" + this.crossroad.id + "&panelId=2";
-    this.meteo_url = "http://localhost:3000/d-solo/aaLTzm7Gz/traffik?orgId=1&from=1594132880904&to=1594737680904&var-id=" + this.crossroad.id + "&panelId=4"
+    this.traffic_url = "http://localhost:3000/d-solo/aaLTzm7Gz/traffik?orgId=1&from=1594648564857&to=1594821364857&var-id=" + this.crossroad.id + "&panelId=2";
+    this.meteo_url = "http://localhost:3000/d-solo/aaLTzm7Gz/traffik?orgId=1&from=1594648541831&to=1594821341831&var-id=" + this.crossroad.id + "&panelId=4"
   }
 
   ngOnDestroy() {

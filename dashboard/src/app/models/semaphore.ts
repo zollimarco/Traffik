@@ -8,6 +8,8 @@ export class CrossRoad {
     pressure: number;
     temperature: number;
     coordinates: Coordinates;
+    address: string;
+    map_url: string;
     semaphores: Semaphore[];
     /**
      * ctor
@@ -19,6 +21,8 @@ export class CrossRoad {
         this.pressure = 0;
         this.temperature = 0;
         this.coordinates = new Coordinates();
+        this.map_url = "";
+        this.address = "";
         this.semaphores = [];
     }
 }

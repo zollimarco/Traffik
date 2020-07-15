@@ -22,20 +22,20 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
 
     //-------------Sample per quando non ci sono dati----------------
-    var obj = new CrossRoad();
-    obj.id = 3;
+    // var obj = new CrossRoad();
+    // obj.id = 3;
 
-    for (let i = 0; i < 4; i++) {
-      obj.semaphores[i] = {
-        id: i + 1,
-        state: 0,
-        car: 0,
-        moto: 0,
-        camion: 0
-      }
-    }
+    // for (let i = 0; i < 4; i++) {
+    //   obj.semaphores[i] = {
+    //     id: i + 1,
+    //     state: 0,
+    //     car: 0,
+    //     moto: 0,
+    //     camion: 0
+    //   }
+    // }
 
-    this.crossroads[0] = obj;
+    // this.crossroads[0] = obj;
     //-------------------------------------------------------------------------------------------------
     //sottoiscrizione al flusso del socket
     this.semaphore_stream = this.socket.subToStream();
@@ -46,9 +46,7 @@ export class HomeComponent implements OnInit {
 
       for (let crossroad of this.crossroads) {
         //in caso di piu incroci verra aggiunto un for 
-        if (crossroad.id === data.id_incrocio) {
-
-          
+        if (crossroad.id === data.id_incrocio) {         
           switch (data.Sensore) {
             case "Stato_Semaforo":
               console.log("crossroad:");
@@ -117,44 +115,6 @@ export class HomeComponent implements OnInit {
           return;
         }
       }
-
-
-      //nuovo semaforo
-      var obj = new CrossRoad();
-      obj.id = data.id_incrocio
-      obj.date = data.Data;
-
-      for (let i = 0; i < 4; i++) {
-        obj.semaphores[i] = new Semaphore();
-        obj.semaphores[i].id = i + 1;
-      }
-      switch (data.Sensore) {
-        case "Stato_Semaforo":
-          obj.semaphores[data.Strada - 1].state = data.Valore;
-          obj.semaphores[data.Strada + 1].state = data.Valore;
-          break;
-        case "Auto":
-          obj.semaphores[data.Strada - 1].car = data.Valore;
-          break;
-        case "Camion":
-          obj.semaphores[data.Strada - 1].camion = data.Valore;
-          break;
-        case "Moto":
-          obj.semaphores[data.Strada - 1].moto = data.Valore;
-          break;
-        case "Umidità":
-          obj.humidity = data.Valore;
-          break;
-        case "Pressione":
-          obj.pressure = data.Valore;
-        case "Temperatura":
-          obj.temperature = data.Valore;
-          break;
-        default:
-          break;
-      }
-      this.crossroads.push(obj);
-      console.log(this.crossroads);
     });
   }
 

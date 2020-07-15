@@ -1,7 +1,7 @@
 <!-- Toolbar -->
 <div class="toolbar" role="banner">
   <span>Traffik</span>
-  <span class="clock">{{clock | date: 'd MMM, y h:mm '}}</span>
+  <span class="clock">{{clock | date: 'd MMM, y HH:mm '}}</span>
 </div>
 <div class="connection" *ngIf="connection_status_bar" [ngClass]="{'online': connection_status === 'connect', 'offline': connection_status !== 'connect'}">
   <span *ngIf="connection_status === 'connect'">Connesso</span>

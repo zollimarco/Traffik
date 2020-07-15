@@ -36,7 +36,6 @@ export class AppComponent {
         this.connection_status = 'connect';
         setTimeout(() => {
           this.connection_status_bar = false;
-          console.log(this.connection_status_bar);
         }, 5000);
       }
       else {
