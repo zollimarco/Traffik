@@ -38,7 +38,7 @@ client_iothub.on('error', function (err) {
 	console.error(err.message);
 });
 
-var mittente = "FF";
+const mittente = "FF";
 
 
 function invio_dati(coppia, destinatario, semafori) {
@@ -96,8 +96,8 @@ client_iothub.open(function (err) {
 			process.exit(1);
 		}
 		// Output the current properties
-		console.log('twin contents:');
-		console.log(twin.properties);
+		//console.log('twin contents:');
+		//console.log(twin.properties);
 		// Add a handler for desired property changes
 		twin.on('properties.desired', function (delta) {
 			console.log('new desired properties received:');
@@ -111,16 +111,16 @@ client_iothub.open(function (err) {
 
 		});
 		var patch = {
-                LastConfiguration: {
-                    updateTime: new Date().toString(),
-                            }
-                        };
+			LastConfiguration: {
+				updateTime: new Date().toString(),
+			}
+		};
 
-            // send the patch
-            twin.properties.reported.update(patch, function (err) {
-                if (err) throw err;
-                console.log('twin state reported');
-            });
+		// send the patch
+		twin.properties.reported.update(patch, function (err) {
+			if (err) throw err;
+			console.log('twin state reported');
+		});
 
 	});
 });
@@ -141,7 +141,7 @@ function parseMsg(data) { //ricevo i dati dal PIC
 	let minutes = date.getMinutes();
 	let seconds = date.getSeconds();
 	let dateDisplay = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-	//let msgSize = data.lenght;
+
 	//salvataggio dei dati 
 	let destinatario = data[0];
 	let mittente = data[1];
@@ -153,11 +153,10 @@ function parseMsg(data) { //ricevo i dati dal PIC
 	let valore1 = byte4.substring(5);
 	let byte5 = parseInt(data[4], 10).toString(2).padStart(8, '0');
 	let valore2 = byte5;
-	//let semaforo_id = mittente;
 	let json = {};
 	let valore = 0;
 	fascia_oraria += 1;
-	//console.log("sensore:  "+sensore)
+
 	if (destinatario === gatewayDef) { //controllo che il dato sia per il gateway
 
 		valore = parseInt(valore1 + valore2, 2); //sommo i 2 valori che si trovano su 2 byte differenti e ne creo uno
@@ -177,42 +176,36 @@ function parseMsg(data) { //ricevo i dati dal PIC
 
 			console.log("Prima Configurazione");
 
-			client_iothub.getTwin(function (err, twin) {
-		if (err) {
-			console.error('error getting twin: ' + err);
-			process.exit(1);
+			client_iothub.open(function (err) {
+				if (err) {
+					console.error('could not open IotHub client');
+				} else {
+					console.log('client opened');
+
+					client_iothub.getTwin(function (err, twin) {
+						if (err) {
+							console.error('could not get twin');
+						} else {
+							var patch = {
+								connectivity: {
+									type: 'cellular'
+								}
+							};
+
+							twin.properties.reported.update(patch, function (err) {
+								if (err) {
+									console.error('could not update twin');
+								} else {
+									console.log('twin state reported');
+									//process.exit();
+								}
+							});
+						}
+					});
+				}
+			});
 		}
-		// Output the current properties
-		console.log('twin contents:');
-		console.log(twin.properties);
-		// Add a handler for desired property changes
-		twin.on('properties.desired', function (delta) {
-			console.log('new desired properties received:');
-			console.log(JSON.stringify(delta)); //visualizzo il json che mi arriva
-			var coppia0 = delta.Config.coppia0;  //prendo la coppia di semafori 1 e 3
-			var coppia1 = delta.Config.coppia1;  //prendo la coppia di semafori 2 e 4
-			var destinatario = delta.Config.IdIncrocio.toString(16); //prendo il destinatario e lo converto in esadecimale
 
-			invio_dati(coppia0, destinatario, '00');
-			invio_dati(coppia1, destinatario, '01');
-
-		});
-
-
-	});
-
-	var patch = {
-                LastConfiguration: {
-                    updateTime: new Date().toString(),
-                            }
-                        };
-
-            // send the patch
-            twin.properties.reported.update(patch, function (err) {
-                if (err) throw err;
-                console.log('twin state reported');
-            });
-		}
 		switch (sensore) { //converdo da binario a valori leggibili
 			case "0001":
 				sensore = "Stato_Semaforo";
@@ -258,6 +251,4 @@ function parseMsg(data) { //ricevo i dati dal PIC
 					 });
 		*/
 	}
-	// console.log(json);
 }
-
