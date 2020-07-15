@@ -75,6 +75,9 @@ function onNewWebsocketConnection(socket) {
       "Incroci": []
     }
     inviaCoordinate();
+	console.log("Invio incroci: " + vett);
+    
+
 
   });
 
@@ -331,13 +334,14 @@ function inviaCoordinate() {
           }
    
           vett.Incroci.push(json_obj);
-          io.emit("Coordinate", vett);
-	  console.log(vett);
+          
+		  //console.log(vett);
       }});
 
       if (query.hasMoreResults) {
         query.nextAsTwin(onResults);
       }
+	  io.emit("Coordinate", vett);
     }
   };
 
