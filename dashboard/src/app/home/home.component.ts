@@ -29,9 +29,9 @@ export class HomeComponent implements OnInit {
     //   obj.semaphores[i] = {
     //     id: i + 1,
     //     state: 0,
-    //     car: 0,
-    //     moto: 0,
-    //     camion: 0
+    //     car: 1,
+    //     moto: 231,
+    //     camion: 3
     //   }
     // }
 
@@ -44,9 +44,9 @@ export class HomeComponent implements OnInit {
     //   obj.semaphores[i] = {
     //     id: i + 1,
     //     state: 0,
-    //     car: 0,
-    //     moto: 0,
-    //     camion: 0
+    //     car: 99 + i,
+    //     moto: 1231,
+    //     camion: 123
     //   }
     // }
 
