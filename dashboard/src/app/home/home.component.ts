@@ -22,36 +22,36 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
 
     //-------------Sample per quando non ci sono dati----------------
-    var obj = new CrossRoad();
-    obj.id = 3;
-    obj.address = "ZIOOOO"
+    // var obj = new CrossRoad();
+    // obj.id = 3;
+    // obj.address = "ZIOOOO"
 
-    for (let i = 0; i < 4; i++) {
-      obj.semaphores[i] = {
-        id: i + 1,
-        state: 0,
-        car: 0,
-        moto: 0,
-        camion: 0
-      }
-    }
+    // for (let i = 0; i < 4; i++) {
+    //   obj.semaphores[i] = {
+    //     id: i + 1,
+    //     state: 0,
+    //     car: 0,
+    //     moto: 0,
+    //     camion: 0
+    //   }
+    // }
 
-    this.crossroads[0] = obj;
-    var obj = new CrossRoad();
-    obj.id = 2;
-    obj.address = "Ciaooo"
+    // this.crossroads[0] = obj;
+    // var obj = new CrossRoad();
+    // obj.id = 2;
+    // obj.address = "Ciaooo"
 
-    for (let i = 0; i < 4; i++) {
-      obj.semaphores[i] = {
-        id: i + 1,
-        state: 0,
-        car: 0,
-        moto: 0,
-        camion: 0
-      }
-    }
+    // for (let i = 0; i < 4; i++) {
+    //   obj.semaphores[i] = {
+    //     id: i + 1,
+    //     state: 0,
+    //     car: 0,
+    //     moto: 0,
+    //     camion: 0
+    //   }
+    // }
 
-    this.crossroads[1] = obj;
+    // this.crossroads[1] = obj;
     //-------------------------------------------------------------------------------------------------
     //sottoiscrizione al flusso del socket
     this.semaphore_stream = this.socket.subToStream();
