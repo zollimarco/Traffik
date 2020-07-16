@@ -13,15 +13,14 @@ import { SemaphoreMap } from '../models/semaphore-map';
 })
 export class SemaphoreListComponent implements OnInit {
 
-
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
   @Input() crossroads: CrossRoad[] = [];
 
   //mapquest
   semaphore_map: SemaphoreMap = new SemaphoreMap();
-  image_url: string;
-  address: string;
+
+  search: string = "";
 
   //coordinates data stream
   coordinates_stream_sub: Subscription;
@@ -60,7 +59,7 @@ export class SemaphoreListComponent implements OnInit {
         //image url
         this.semaphore_map.coordinates.latitude = crossroad.coordinates.latitude;
         this.semaphore_map.coordinates.longitude = crossroad.coordinates.longitude;
-  
+
         crossroad.map_url = this.mapquest.getMapImage(this.semaphore_map);
 
         //address
@@ -72,16 +71,10 @@ export class SemaphoreListComponent implements OnInit {
           crossroad.address = street + " (" + city + ")";
         });
       });
-      // Ottengo il contenuto di data (se piu semafori verifico l'id attraverso un loop)
-      //this.coordinates_list = data.Incroci;
     });
-
     this.socket.getCoordinates();
-    //aggiungere un controllo per vedere che la variabile sia carica
-    //if (this.coordinates_list.length) {
-    // this.coordinates.latitude = this.coordinates_list[0].Latitudine;
-    // this.coordinates.longitude = this.coordinates_list[0].Longitudine;
-    //console.log(this.address);
-    //}
+  }
+  onSearch($event){
+    this.search = $event;
   }
 }

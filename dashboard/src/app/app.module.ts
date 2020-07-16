@@ -10,6 +10,7 @@ import { SemaphoreDetailsComponent } from './semaphore-details/semaphore-details
 import { HomeComponent } from './home/home.component'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
+
 //Material Design
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,12 +21,17 @@ import { MatCardModule } from '@angular/material/card';
 import { SemaphoreMapComponent } from './semaphore-map/semaphore-map.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
+
 //API
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { url } from 'config/backend.json';
 const config: SocketIoConfig = { url: url.protocol + url.ip + url.port, options: {} };
+
 //Plugins
 import { SafePipeModule } from 'safe-pipe';
+
+//Pipes
+import { FilterAddressPipe } from 'src/app/pipes/filter-address.pipe';
 
 @NgModule({
   declarations: [
@@ -35,7 +41,8 @@ import { SafePipeModule } from 'safe-pipe';
     SearchBarComponent,
     SemaphoreMapComponent,
     SemaphoreDetailsComponent,
-    HomeComponent
+    HomeComponent,
+    FilterAddressPipe
   ],
   imports: [
     BrowserModule,

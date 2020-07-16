@@ -1,10 +1,12 @@
+
+<app-search-bar (search)="onSearch($event)"></app-search-bar>
 <mat-divider class="divider"></mat-divider>
 <div class="actions">
     <button mat-button (click)="accordion.openAll()">Espandi tutto</button>
     <button mat-button color="warn" (click)="accordion.closeAll()">Chiudi tutto</button>
 </div>
 <mat-accordion class="headers-align" multi>
-    <div *ngFor="let crossroad of crossroads">
+    <div *ngFor="let crossroad of crossroads | filterAddress: search">
         <app-semaphore [crossroad]="crossroad"></app-semaphore>
     </div>
 </mat-accordion>
