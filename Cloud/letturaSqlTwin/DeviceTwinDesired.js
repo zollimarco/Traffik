@@ -1,7 +1,7 @@
 'use strict';
 
 var iothub = require('azure-iothub');
-var connectionString = 'HostName=HubForApi.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=bNfWqzIU43AT2kk0IumPG9mXhVVPfDdAiPzrzFpgHL4=';
+var connectionString = 'HostName=HubProva.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=zRoNoFearFgvAmgrzIRQrVRra99PaF5gYsRe1pVJfEE=';
 var registry = iothub.Registry.fromConnectionString(connectionString);
 var schedule = require('node-schedule');
 
