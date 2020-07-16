@@ -370,9 +370,13 @@ void semafori(){
                 case 6:
                     if((secondi % 2) == 0){
                         PORTC = 0x27;
+                        uart_print(1,0x01,0,indice_fascia);  
+                        uart_print(1,0x02,1,indice_fascia);
                     }
                     else{
                         PORTC = 0x00;
+                        uart_print(1,0x01,0,indice_fascia);  
+                        uart_print(1,0x02,1,indice_fascia);
                     }
                     
                     orario();
