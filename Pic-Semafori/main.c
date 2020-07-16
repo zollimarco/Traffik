@@ -118,6 +118,7 @@ char indice_fascia;
 char rosso_comune = 2;
 char giallo = 5;
 void *orario();
+char lampeggiante =0;
 
 
 void main(void) {
@@ -370,11 +371,16 @@ void semafori(){
                 case 6:
                     if((secondi % 2) == 0){
                         PORTC = 0x27;
+                        if(lampeggiante==0)
+                        {
                         uart_print(1,0x01,0,indice_fascia);  
                         uart_print(1,0x01,1,indice_fascia);
+                        lampeggiante=1;
+                        }
                     }
                     else{
                         PORTC = 0x00;
+                        lampeggiante=0;
                     }
                     
                     orario();
