@@ -1,7 +1,7 @@
 'use strict';
 
 var iothub = require('azure-iothub');
-var connectionString = 'HostName=HubProva.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=zRoNoFearFgvAmgrzIRQrVRra99PaF5gYsRe1pVJfEE=';
+var connectionString = 'HostName=HubForApi.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=bNfWqzIU43AT2kk0IumPG9mXhVVPfDdAiPzrzFpgHL4=';
 var registry = iothub.Registry.fromConnectionString(connectionString);
 var schedule = require('node-schedule');
 
@@ -71,7 +71,7 @@ function executeStatement() {
   });
   connection.execSql(request);
 
-  registry.getTwin('incrocio3', function (err, twin) {
+  registry.getTwin('incrocio57', function (err, twin) {
     if (err) {
       console.error(err.constructor.name + ': ' + err.message);
     } else {
@@ -131,6 +131,11 @@ function executeStatement() {
                 verde23: temporizzazioni[45].valore_tempo,
                 verde24: temporizzazioni[47].valore_tempo
   
+              },
+              IdIncrocio: 57,
+              Coordinate: {
+                latitudine: 45.966572,
+                longitudine: 12.659432
               }
             }
           }
@@ -167,12 +172,6 @@ class Tempo {
   }
 };
 
-// function Tempo(id_sem, fascia, valore) {  // Function constructor
-//   this.id_semaforo = id_sem;
-//   this.fascia_oraria = fascia;
-//   this.valore_tempo = valore;
-// }
-
 function addTempo(id_sem, fascia, valore) {
   let t = new Tempo(id_sem, fascia, valore); // here we create instance
   temporizzazioni.push(t);
@@ -181,10 +180,6 @@ function addTempo(id_sem, fascia, valore) {
   console.log(temporizzazioni.length);
 
 }
-
-
-
-
 
 
 });
