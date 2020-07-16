@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { SensorData } from '../models/sensor-data';
 import { CrossRoad, Semaphore } from '../models/semaphore';
-import { Coordinates } from '../models/semaphore-map';
 import { SocketService } from '../services/socket.service';
 
 @Component({
@@ -69,7 +68,7 @@ export class HomeComponent implements OnInit {
               console.log(crossroad);
 
               //controllo semafori
-              if (crossroad.semaphores[data.Strada + 1] || crossroad.semaphores[data.Strada - 1]) {
+              if (!crossroad.semaphores[data.Strada + 1] || !crossroad.semaphores[data.Strada - 1]) {
                 crossroad.semaphores[data.Strada - 1] = new Semaphore();
                  crossroad.semaphores[data.Strada - 1].id = data.Strada;
                  crossroad.semaphores[data.Strada + 1] = new Semaphore();
@@ -82,45 +81,21 @@ export class HomeComponent implements OnInit {
               console.log(crossroad);
               break;
             case "Auto":
-              if (crossroad.semaphores[data.Strada - 1]) {
-                crossroad.semaphores[data.Strada - 1] = new Semaphore();
-                 crossroad.semaphores[data.Strada - 1].id = data.Strada;
-               }
               crossroad.semaphores[data.Strada - 1].car = data.Valore;
               break;
             case "Camion":
-              if (crossroad.semaphores[data.Strada - 1]) {
-                crossroad.semaphores[data.Strada - 1] = new Semaphore();
-                 crossroad.semaphores[data.Strada - 1].id = data.Strada;
-               }
               crossroad.semaphores[data.Strada - 1].camion = data.Valore;
               break;
             case "Moto":
-              if (crossroad.semaphores[data.Strada - 1]) {
-                crossroad.semaphores[data.Strada - 1] = new Semaphore();
-                 crossroad.semaphores[data.Strada - 1].id = data.Strada;
-               }
               crossroad.semaphores[data.Strada - 1].moto = data.Valore;
               break;
             case "Umidità":
-              if (crossroad.semaphores[data.Strada - 1]) {
-                crossroad.semaphores[data.Strada - 1] = new Semaphore();
-                 crossroad.semaphores[data.Strada - 1].id = data.Strada;
-               }
               crossroad.humidity = data.Valore;
               break;
             case "Pressione":
-              if (crossroad.semaphores[data.Strada - 1]) {
-                crossroad.semaphores[data.Strada - 1] = new Semaphore();
-                 crossroad.semaphores[data.Strada - 1].id = data.Strada;
-               }
               crossroad.pressure = data.Valore;
               break;
             case "Temperatura":
-              if (crossroad.semaphores[data.Strada - 1]) {
-                crossroad.semaphores[data.Strada - 1] = new Semaphore();
-                 crossroad.semaphores[data.Strada - 1].id = data.Strada;
-               }
               crossroad.temperature = data.Valore;
               break;
             default:
