@@ -6,11 +6,11 @@ const influx = new Influx.InfluxDB({
   database: "Traffik",
   port: 8086
 });
-const connectionString = "Endpoint=sb://ihsuprodamres044dednamespace.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=bNfWqzIU43AT2kk0IumPG9mXhVVPfDdAiPzrzFpgHL4=;EntityPath=iothub-ehub-hubforapi-3522311-cda7ebab0f";
+const connectionString = "Endpoint=sb://ihsuprodamres072dednamespace.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=zRoNoFearFgvAmgrzIRQrVRra99PaF5gYsRe1pVJfEE=;EntityPath=iothub-ehub-hubprova-3522617-d5b8ed362c";
 var ConnectionPool = require('tedious-connection-pool');
 var Request = require('tedious').Request
 var iothub = require('azure-iothub');
-var connectionString1 = 'HostName=HubForApi.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=bNfWqzIU43AT2kk0IumPG9mXhVVPfDdAiPzrzFpgHL4=';
+var connectionString1 = 'HostName=HubProva.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=zRoNoFearFgvAmgrzIRQrVRra99PaF5gYsRe1pVJfEE=';
 var registry = iothub.Registry.fromConnectionString(connectionString1);
 
 

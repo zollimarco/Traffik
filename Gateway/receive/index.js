@@ -1,7 +1,7 @@
 var Client = require('azure-iot-device').Client;
 var Protocol = require('azure-iot-device-mqtt').Mqtt;
 
-var connectionString = 'HostName=HubForApi.azure-devices.net;DeviceId=incrocio3;SharedAccessKey=NlF0wBvOlRucJOVtipjF+tDjlPjBbohfWDPMHvVSVLE=';
+var connectionString = 'HostName=HubForApi.azure-devices.net;DeviceId=incrocio57;SharedAccessKey=HkwEp9KVPHhl25mx8mSyEo30oLThYtxXabffMh2Sx1E=';
 
 var client_iothub = Client.fromConnectionString(connectionString, Protocol);
 
@@ -100,7 +100,7 @@ client_iothub.open(function (err) {
 		//console.log(twin.properties);
 		// Add a handler for desired property changes
 		twin.on('properties.desired', function (delta) {
-			console.log('new desired properties received:');
+			console.log('Nuova configurazione ricevuta:');
 			console.log(JSON.stringify(delta)); //visualizzo il json che mi arriva
 			var coppia0 = delta.Config.coppia0;  //prendo la coppia di semafori 1 e 3
 			var coppia1 = delta.Config.coppia1;  //prendo la coppia di semafori 2 e 4
@@ -132,6 +132,7 @@ function roundToTwo(num) {
 }
 
 function parseMsg(data) { //ricevo i dati dal PIC
+	//Data e Ora
 	//console.log(data);
 	let date = new Date();
 	let day = date.getDate();
@@ -186,19 +187,28 @@ function parseMsg(data) { //ricevo i dati dal PIC
 						if (err) {
 							console.error('could not get twin');
 						} else {
+
+							console.log(twin.properties);
+
+							var delta = twin.properties.desired;
+							var coppia0 = delta.Config.coppia0;  //prendo la coppia di semafori 1 e 3
+							var coppia1 = delta.Config.coppia1;  //prendo la coppia di semafori 2 e 4
+							var destinatario = delta.Config.IdIncrocio.toString(16); //prendo il destinatario e lo converto in esadecimale
+
+
+							invio_dati(coppia0, destinatario, '00');
+							invio_dati(coppia1, destinatario, '01');
+
 							var patch = {
-								connectivity: {
-									type: 'cellular'
+								LastConfiguration: {
+									updateTime: new Date().toString(),
 								}
 							};
 
+							// send the patch
 							twin.properties.reported.update(patch, function (err) {
-								if (err) {
-									console.error('could not update twin');
-								} else {
-									console.log('twin state reported');
-									//process.exit();
-								}
+								if (err) throw err;
+								console.log('twin state reported');
 							});
 						}
 					});
@@ -215,6 +225,7 @@ function parseMsg(data) { //ricevo i dati dal PIC
 				break;
 			case "0100":
 				sensore = "Pressione";
+				valore += 870;
 				break;
 			case "0101":
 				sensore = "Auto";
