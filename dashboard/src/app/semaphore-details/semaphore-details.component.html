@@ -2,12 +2,12 @@
     <div class="crossroad">
         <mat-grid-list cols="2" rowHeight="500px" class="crossroad-data">
             <mat-grid-tile>
-                <app-semaphore-map [image_url]="image_url"></app-semaphore-map>
+                <app-semaphore-map [image_url]="crossroad.map_url"></app-semaphore-map>
             </mat-grid-tile>
             <mat-grid-tile [colspan]="1" [rowspan]="1">
                 <div class="data-section">
                     <div class="address">
-                        <h1>{{address}}</h1>
+                        <h1>{{crossroad.address}}</h1>
                     </div>
                     <div class="ambient-data">
                         <span class="last-update">Ultimo aggiornamento:

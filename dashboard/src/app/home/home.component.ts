@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit {
     //-------------Sample per quando non ci sono dati----------------
     // var obj = new CrossRoad();
     // obj.id = 3;
-    // obj.address = "ZIOOOO"
+    // obj.address = "ehy"
 
     // for (let i = 0; i < 4; i++) {
     //   obj.semaphores[i] = {
@@ -39,7 +39,7 @@ export class HomeComponent implements OnInit {
     // this.crossroads[0] = obj;
     // var obj = new CrossRoad();
     // obj.id = 2;
-    // obj.address = "Ciaooo"
+    // obj.address = "ciao"
 
     // for (let i = 0; i < 4; i++) {
     //   obj.semaphores[i] = {

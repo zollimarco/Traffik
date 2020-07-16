@@ -18,8 +18,6 @@ export class SemaphoreDetailsComponent implements OnInit {
 
   //MapQuest
   semaphore_map: SemaphoreMap = new SemaphoreMap();
-  image_url: string;
-  address: string;
 
   //Grafana
   traffic_url: string;
@@ -43,14 +41,14 @@ export class SemaphoreDetailsComponent implements OnInit {
     this.semaphore_map.size.width = 1000;
     this.semaphore_map.zoom = 18;
 
-    this.image_url = this.mapquest.getMapImage(this.semaphore_map);
+    this.crossroad.map_url = this.mapquest.getMapImage(this.semaphore_map);
 
     this.mapquest.getAddress(this.semaphore_map.coordinates, (data) => {
       let street = data.results[0].locations[0].street;
       let city = data.results[0].locations[0].adminArea5;
 
       // Formatto l'indirizzo
-      this.address = street + " (" + city + ")";
+      this.crossroad.address = street + " (" + city + ")";
     });
 
     this.details_sub = this.socket.subToDetails().subscribe((data) => {
