@@ -26,7 +26,10 @@ node index
 
 _______________________________________________
 
-Cloud : Zolli Marco, Alessandro Momesso;
-Dashboard : Michelangelo Basso, Francesca Venier;
-Gateway : Nicola Pozza;
+Cloud : Zolli Marco, Alessandro Momesso
+
+Dashboard : Michelangelo Basso, Francesca Venier
+
+Gateway : Nicola Pozza
+
 Pic : Filippo Mastrotto
